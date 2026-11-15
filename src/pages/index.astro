@@ -1,14 +1,17 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
-import { SITE_TITLE, SITE_DESCRIPTION } from "../consts.ts";
+import Hero from "../components/Hero.svelte";
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead
+			title={"Ariel Mutebi"}
+			description={"A highly-skilled full-stack web developer and TKS innovator."}
+		/>
 	</head>
 	<body class="font-sans min-h-dvh bg-ebony-50">
-		<h1 class="text-9xl text-ebony-900">Hello, in Bricolage!</h1>
+		<Hero client:load />
 	</body>
 </html>
