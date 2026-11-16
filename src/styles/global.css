@@ -68,39 +68,6 @@
   }
 }
 
-@layer components {
-.interactive-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    border-radius: inherit;
-
-    background: radial-gradient(circle 220px at var(--spot-x, 50%) var(--spot-y, 50%),
-        rgb(255 255 255 / 30%),
-        rgb(255 255 255 / 10%) 45%,
-        transparent 75%);
-
-    opacity: 0;
-    transition: opacity 400ms ease;
-  }
-
-  .interactive-card:hover::after {
-    opacity: 1;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .interactive-card {
-      animation: none;
-    }
-
-    .interactive-card::after {
-      transition: none;
-    }
-  }
-}
-
 @layer utilities {
   .reveal-mask {
     display: block;

@@ -40,7 +40,7 @@
           trigger: heroContainer,
           start: "top top",
           end: "bottom bottom",
-          scrub: 0.15,
+          scrub: 5.0,
           onUpdate: (self) => {
             setProgress(self.progress);
           }
@@ -56,7 +56,7 @@
   });
 </script>
 
-<header bind:this={heroContainer}  class="relative min-h-[200vh] bg-ebony-50">
+<header bind:this={heroContainer}  class="relative min-h-[400vh] bg-ebony-50">
   <div class="sticky top-0 h-dvh w-full overflow-hidden">
     
     <!-- Canvas Background -->

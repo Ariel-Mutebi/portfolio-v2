@@ -118,6 +118,57 @@
       card.addEventListener('pointermove', handlePointerMove);
       card.addEventListener('pointerleave', handlePointerLeave);
 
+
+      // 4. Whole-card magnetic tilt
+      const maxTilt = 3;
+
+      // Give the card a 3D perspective
+      gsap.set(card, {
+        transformPerspective: 1000,
+        transformOrigin: 'center'
+      });
+
+      // Smoothly animate card rotation
+      const rotateX = gsap.quickTo(card, 'rotationX', {
+        duration: 0.6,
+        ease: 'power3.out'
+      });
+
+      const rotateY = gsap.quickTo(card, 'rotationY', {
+        duration: 0.6,
+        ease: 'power3.out'
+      });
+
+      const handleCardTilt = (event: PointerEvent) => {
+        if (event.pointerType !== 'mouse') return;
+
+        const rect = card.getBoundingClientRect();
+
+        // Cursor position relative to card center (-1 to 1)
+        const x = (event.clientX - rect.left) / rect.width;
+        const y = (event.clientY - rect.top) / rect.height;
+
+        const normalizedX = (x - 0.5) * 2;
+        const normalizedY = (y - 0.5) * 2;
+
+        rotateX(-normalizedY * maxTilt);
+        rotateY(normalizedX * maxTilt);
+      };
+
+      const resetCardTilt = () => {
+        rotateX(0);
+        rotateY(0);
+      };
+
+      card.addEventListener('pointermove', handleCardTilt);
+      card.addEventListener('pointerleave', resetCardTilt);
+
+      // NEW: clean up the additional event listeners
+      return () => {
+        card.removeEventListener('pointermove', handleCardTilt);
+        card.removeEventListener('pointerleave', resetCardTilt);
+      };
+
     }, card);
 
     return () => ctx.revert();
@@ -127,7 +178,7 @@
 <hgroup
   bind:this={card}
   class="grid p-5 gap-5 pb-8 max-w-2xl border border-ebony-400 rounded-xl bg-linear-to-br
-    from-ebony-50 via-ebony-100 to-ebony-200 bg-size-[200%_200%] animate-ambient"
+    from-ebony-50 via-ebony-100 to-ebony-200 bg-size-[200%_200%] animate-ambient will-change-transform"
 >
   <h1 class="text-8xl text-ebony-950 font-extrabold reveal-mask">
     <span class="reveal-text magnetic-text">
