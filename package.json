@@ -9,7 +9,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "bake:terrain": "node scripts/terrain.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.1.6",
@@ -18,9 +19,11 @@
     "@astrojs/svelte": "^9.1.6",
     "@tailwindcss/vite": "^4.3.5",
     "astro": "^7.4.12",
+    "gsap": "^3.15.1",
     "sharp": "^0.35.0",
     "svelte": "^5.57.3",
     "tailwindcss": "^4.3.5",
+    "three": "^0.187.0",
     "typescript": "^6.0.3"
   }
 }
