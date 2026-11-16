@@ -4,7 +4,7 @@ import {
   HalfFloatType,
   LinearFilter,
   Mesh,
-  OrthographicCamera,
+  PerspectiveCamera,
   PlaneGeometry,
   RedFormat,
   Scene,
@@ -13,28 +13,20 @@ import {
   WebGLRenderer,
   Color,
   UnsignedByteType,
+  Vector4,
+  DoubleSide,
+  MathUtils,
 } from 'three';
 import type { TerrainMetadata } from './types.ts';
 import vertexShader from './shaders/fullscreen.vert?raw';
 import fragmentShader from './shaders/terrain.frag?raw';
 
-/**
- * Maps every possible stored value (0 to 65535) to its half-float bit pattern.
- * Built once when the module loads.
- */
 const halfFloatLookup = Uint16Array.from({ length: 65536 }, (_, stored) =>
   DataUtils.toHalfFloat(stored / 65535),
 );
 
-/**
- * Downloads the baked heightmap and uploads it to the GPU as a single-channel texture.
- * Linear filtering blends neighboring pixels, so heights stay smooth when stretched.
- */
 async function loadHeightTexture(url: string, width: number, height: number) {
   const stored = new Uint16Array(await (await fetch(url)).arrayBuffer());
-  if (stored.length !== width * height) {
-    throw new Error(`Heightmap has ${stored.length} values, expected ${width * height}`);
-  }
   const texture = new DataTexture(
     Uint16Array.from(stored, (value) => halfFloatLookup[value]),
     width,
@@ -58,28 +50,13 @@ async function loadWaterTexture(url: string, width: number, height: number) {
   return texture;
 };
 
-/** How much of the map (as a 0 to 1 fraction of each axis) fits on screen. */
-const computeCover = (viewAspect: number, mapAspect: number): [number, number] =>
-  viewAspect > mapAspect ? [1, mapAspect / viewAspect] : [viewAspect / mapAspect, 1];
-
-interface SceneOptions {
-  canvas: HTMLCanvasElement;
-  terrain: TerrainMetadata;
-  heightmapUrl: string;
-  watermaskUrl: string;
-};
-
-/** Reads a color from a CSS variable on an element and converts it for three.js. */
 const readCssColor = (element: HTMLElement, name: string) => {
   const value = getComputedStyle(element).getPropertyValue(name).trim();
   if (!value) throw new Error(`CSS variable ${name} is not defined`);
   return new Color(value);
 };
 
-/**
- * Sets up the hero's WebGL scene on the given canvas and returns a handle to tear it down.
- */
-export async function createHeroScene(options: SceneOptions) {
+export async function createHeroScene(options: { canvas: HTMLCanvasElement; terrain: TerrainMetadata; heightmapUrl: string; watermaskUrl: string; }) {
   const { canvas, terrain, heightmapUrl, watermaskUrl } = options;
   const color = (name: string) => readCssColor(canvas, name);
 
@@ -87,13 +64,12 @@ export async function createHeroScene(options: SceneOptions) {
     loadHeightTexture(heightmapUrl, terrain.width, terrain.height),
     loadWaterTexture(watermaskUrl, terrain.width, terrain.height),
   ]);
-  
-  const renderer = new WebGLRenderer({ canvas });
+
+  const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const uniforms = {
     uHeight: { value: heightTexture },
-    uCover: { value: new Vector2(1, 1) },
     uMinElevation: { value: terrain.minElevation },
     uMaxElevation: { value: terrain.maxElevation },
     uFieldColor: { value: color('--color-ebony-100') },
@@ -101,8 +77,8 @@ export async function createHeroScene(options: SceneOptions) {
     uIndexColor: { value: color('--color-ebony-600') },
     uTexel: { value: new Vector2(1 / terrain.width, 1 / terrain.height) },
     uMetersPerPixel: { value: terrain.metersPerPixel },
-    uExaggeration: { value: 2.0 },
-    uReal: { value: 1 },
+    uExaggeration: { value: 1.5 },
+    uReal: { value: 1.0 },
     uWater: { value: waterTexture },
     uWaterColor: { value: color('--color-steel-500') },
     uWaterMapColor: { value: color('--color-steel-900') },
@@ -112,38 +88,76 @@ export async function createHeroScene(options: SceneOptions) {
     uSnowColor: { value: color('--color-ebony-50') },
     uSunColor: { value: color('--color-pollen-100').multiplyScalar(0.9) },
     uAmbientColor: { value: color('--color-steel-700').multiplyScalar(0.4) },
+    uSkyColor: { value: color('--color-steel-100') },
+    uGridColor: { value: color('--color-ebony-200') },
+    uBounds: { value: new Vector4(terrain.bounds.west, terrain.bounds.east, terrain.bounds.south, terrain.bounds.north) },
+    uTime: { value: 0.0 },
   };
 
-  const geometry = new PlaneGeometry(2, 2);
-  const material = new ShaderMaterial({ uniforms, vertexShader, fragmentShader });
+  // Scale up the plane significantly to prevent edges showing when angled
+  const planeWidth = 4;
+  const planeHeight = 4 * (terrain.height / terrain.width);
+  const geometry = new PlaneGeometry(planeWidth, planeHeight, 512, 512);
+
+  const material = new ShaderMaterial({ uniforms, vertexShader, fragmentShader, side: DoubleSide });
   const scene = new Scene();
   scene.add(new Mesh(geometry, material));
-  const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-  const render = () => renderer.render(scene, camera);
+  const fov = 45;
+  const camera = new PerspectiveCamera(fov, 1, 0.1, 100);
 
   /**
-   * Passing false to setSize stops three from overwriting the canvas CSS size,
-   * which Tailwind already controls. Observing the canvas also fires once at the start.
+   * Dynamically calculates camera position to ensure the plane always covers the screen.
+   * @param progress 0.0 = angled 3D view, 1.0 = top-down map view
    */
+  const updateCamera = (progress: number) => {
+    const aspect = canvas.clientWidth / canvas.clientHeight;
+    const tanHalfFov = Math.tan(fov * Math.PI / 360);
+
+    // Progress goes from 0 (angled) to 1 (flat)
+    const angleRad = MathUtils.lerp(MathUtils.degToRad(35), 0, progress);
+
+    // Calculate required distance to cover screen vertically (foreshortened) and horizontally
+    const dV = (planeHeight * Math.cos(angleRad)) / (2 * tanHalfFov);
+    const dH = planeWidth / (2 * tanHalfFov * aspect);
+
+    // Use the minimum distance to ensure coverage, *0.85 gives a bit of margin
+    const dist = Math.min(dV, dH) * 0.85;
+
+    camera.position.set(0, -dist * Math.sin(angleRad), dist * Math.cos(angleRad));
+    camera.lookAt(0, 0, 0);
+  };
+
   const observer = new ResizeObserver(() => {
     const { clientWidth, clientHeight } = canvas;
     renderer.setSize(clientWidth, clientHeight, false);
-    uniforms.uCover.value.set(
-      ...computeCover(clientWidth / clientHeight, terrain.width / terrain.height),
-    );
-    render();
+    camera.aspect = clientWidth / clientHeight;
+    camera.updateProjectionMatrix();
+
+    // Re-run camera calculation on resize
+    updateCamera(1.0 - uniforms.uReal.value);
+    renderer.render(scene, camera);
   });
   observer.observe(canvas);
 
+  // Initial render setup
+  updateCamera(0); // Start angled
+  renderer.render(scene, camera);
+
   return {
+    // Expose this so you can hook it up to a scroll event!
+    setProgress: (progress: number) => {
+      uniforms.uReal.value = 1.0 - progress;
+      updateCamera(progress);
+      renderer.render(scene, camera);
+    },
     dispose: () => {
       observer.disconnect();
       geometry.dispose();
       material.dispose();
       heightTexture.dispose();
-      renderer.dispose();
       waterTexture.dispose();
+      renderer.dispose();
     },
   };
 };

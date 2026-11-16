@@ -31,5 +31,5 @@
 
 <header class="min-h-dvh grid grid-rows-2 justify-center items-start">
   <canvas bind:this={canvas} class="absolute inset-0 size-full"></canvas>
-  <Card />
+  <!-- <Card /> -->
 </header>

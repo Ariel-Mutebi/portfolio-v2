@@ -20,7 +20,7 @@ type Extent = { min: number; max: number };
  * (each step up halves the meters per pixel). WIDTH and HEIGHT are the output size in
  * pixels. TILE is the size of one downloaded tile, which is fixed at 256 by the dataset.
  */
-const CENTER: LonLat = { lat: 0.2, lon: 29.9 };
+const CENTER: LonLat = { lat: 0.0, lon: 29.9 };
 const ZOOM = 11;
 const WIDTH = 2048;
 const HEIGHT = 1152;
