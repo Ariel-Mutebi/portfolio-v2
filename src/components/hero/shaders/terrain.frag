@@ -95,6 +95,8 @@ float castShadow(vec2 uv, float startElevation, vec3 lightDir) {
   return shadow;
 }
 
+// ... (uniforms and noise functions remain the same)
+
 void main() {
   vec2 uv = vUv;
   uv.y = 1.0 - uv.y;
@@ -143,7 +145,7 @@ void main() {
 
   // REALISTIC WATER
   if (waterMask > 0.0) {
-      vec2 waveUv = vWorldPosition.xy * 80.0; 
+      vec2 waveUv = vWorldPosition.xy * 40.0; 
       float wave = fbm(waveUv) * 0.5; 
       
       vec3 viewDir = normalize(cameraPosition - vWorldPosition);
@@ -159,18 +161,21 @@ void main() {
       realColor = mix(realColor, waterRealColor, waterMask);
   }
 
-  // CLOUDS (Softer, tinted by the sun)
-  vec2 cloudUv = vWorldPosition.xy * 2.0 + vec2(uTime * 0.02, uTime * 0.01); 
+  // CLOUDS (Fixed scale and opacity)
+  vec2 cloudUv = uv * 6.0 + vec2(uTime * 0.05, uTime * 0.02); 
   float cloudNoise = fbm(cloudUv);
-  float cloudMask = smoothstep(0.45, 0.65, cloudNoise);
-  cloudMask *= smoothstep(1000.0, 3000.0, elevation) * uReal; 
   
-  float cloudShadow = smoothstep(0.3, 0.6, fbm(cloudUv + vec2(0.1, 0.1)));
-  realColor *= mix(0.8, 1.0, cloudShadow);
+  // Create distinct fluffy patches
+  float cloudMask = smoothstep(0.1, 0.4, cloudNoise);
+  cloudMask *= uReal; // Fade out in map state
+  
+  // Shadows cast by the clouds
+  float cloudShadow = smoothstep(0.0, 0.3, fbm(cloudUv + vec2(0.05, 0.05)));
+  realColor *= mix(0.7, 1.0, cloudShadow);
 
-  // Use sun color for the clouds instead of harsh white
+  // Cloud color and blending
   vec3 cloudColor = uSunColor * 1.2 + uSkyColor * 0.5;
-  realColor = mix(realColor, cloudColor, cloudMask * 0.35);
+  realColor = mix(realColor, cloudColor, cloudMask * 0.65);
 
   // Vignette
   realColor *= mix(0.7, 1.0, smoothstep(1.5, 0.3, length(vUv - 0.5)));
