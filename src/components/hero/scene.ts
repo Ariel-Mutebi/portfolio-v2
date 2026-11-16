@@ -72,16 +72,16 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
     uHeight: { value: heightTexture },
     uMinElevation: { value: terrain.minElevation },
     uMaxElevation: { value: terrain.maxElevation },
-    uFieldColor: { value: color('--color-ebony-100') },
-    uMinorColor: { value: color('--color-ebony-300') },
-    uIndexColor: { value: color('--color-ebony-600') },
+    uFieldColor: { value: color('--color-pollen-50') },
+    uMinorColor: { value: color('--color-ebony-600') },
+    uIndexColor: { value: color('--color-ebony-950') },
     uTexel: { value: new Vector2(1 / terrain.width, 1 / terrain.height) },
     uMetersPerPixel: { value: terrain.metersPerPixel },
     uExaggeration: { value: 2.0 },
     uReal: { value: 1.0 },
     uWater: { value: waterTexture },
     uWaterColor: { value: color('--color-steel-500') },
-    uWaterMapColor: { value: color('--color-steel-900') },
+    uWaterMapColor: { value: color('--color-steel-400') },
     uLowColor: { value: color('--color-viridian-800') },
     uMidColor: { value: color('--color-viridian-500') },
     uRockColor: { value: color('--color-ebony-400') },
@@ -89,8 +89,6 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
     uSunColor: { value: color('--color-pollen-100').multiplyScalar(0.9) },
     uAmbientColor: { value: color('--color-steel-700').multiplyScalar(0.4) },
     uSkyColor: { value: color('--color-steel-100') },
-    uGridColor: { value: color('--color-ebony-200') },
-    uBounds: { value: new Vector4(terrain.bounds.west, terrain.bounds.east, terrain.bounds.south, terrain.bounds.north) },
     uTime: { value: 0.0 },
   };
 
@@ -127,6 +125,19 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
     camera.lookAt(0, 0, 0);
   };
 
+  // PERFORMANCE OPTIMIZATION: Render Throttling
+  let isRenderPending = false;
+
+  const requestRender = () => {
+    if (!isRenderPending) {
+      isRenderPending = true;
+      requestAnimationFrame(() => {
+        renderer.render(scene, camera);
+        isRenderPending = false;
+      });
+    }
+  };
+
   const observer = new ResizeObserver(() => {
     const { clientWidth, clientHeight } = canvas;
     renderer.setSize(clientWidth, clientHeight, false);
@@ -134,18 +145,18 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
     camera.updateProjectionMatrix();
 
     updateCamera(1.0 - uniforms.uReal.value);
-    renderer.render(scene, camera);
+    requestRender();
   });
   observer.observe(canvas);
 
   updateCamera(0);
-  renderer.render(scene, camera);
+  requestRender();
 
   return {
     setProgress: (progress: number) => {
       uniforms.uReal.value = 1.0 - progress;
       updateCamera(progress);
-      renderer.render(scene, camera);
+      requestRender();
     },
     dispose: () => {
       observer.disconnect();

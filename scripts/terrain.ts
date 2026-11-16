@@ -21,7 +21,7 @@ type Extent = { min: number; max: number };
  * pixels. TILE is the size of one downloaded tile, which is fixed at 256 by the dataset.
  */
 const CENTER: LonLat = { lat: 0.0, lon: 29.9 };
-const ZOOM = 11;
+const ZOOM = 10;
 const WIDTH = 2048;
 const HEIGHT = 1152;
 const TILE = 256;

@@ -21,19 +21,30 @@ uniform vec3 uSnowColor;
 uniform vec3 uSunColor;
 uniform vec3 uAmbientColor;
 uniform vec3 uSkyColor;
-uniform vec3 uGridColor;
-uniform vec4 uBounds;
 uniform float uTime;
 
 float elevationAt(vec2 uv) {
   return mix(uMinElevation, uMaxElevation, texture2D(uHeight, uv).r);
 }
 
-float contour(float elevation, float interval, float halfWidthPx) {
+// OPTIMIZATION: Simplified from 9-tap to 5-tap cross
+float mapElevationAt(vec2 uv) {
+  vec2 offset = uTexel * 3.0; 
+  float center = elevationAt(uv);
+  float n = elevationAt(uv - vec2(0.0, offset.y));
+  float s = elevationAt(uv + vec2(0.0, offset.y));
+  float e = elevationAt(uv + vec2(offset.x, 0.0));
+  float w = elevationAt(uv - vec2(offset.x, 0.0));
+  return (center * 2.0 + n + s + e + w) / 6.0;
+}
+
+float contour(float elevation, float interval, float thicknessPx) {
   float f = elevation / interval;
-  float distancePx = abs(fract(f - 0.5) - 0.5) / fwidth(f);
-  float line = 1.0 - smoothstep(halfWidthPx - 0.5, halfWidthPx + 0.5, distancePx);
-  float crowded = 1.0 - smoothstep(0.25, 0.5, fwidth(f));
+  float dist = abs(fract(f) - 0.5); 
+  float fw = max(fwidth(f), 0.002); 
+  float w = fw * thicknessPx;
+  float line = smoothstep(0.5 - w, 0.5 + w, dist);
+  float crowded = 1.0 - smoothstep(0.15, 0.35, fw);
   return line * crowded;
 }
 
@@ -60,10 +71,12 @@ float noise2(vec2 p) {
                mix(dot(hash2(i + vec2(0.0, 1.0)), f - vec2(0.0, 1.0)),
                    dot(hash2(i + vec2(1.0, 1.0)), f - vec2(1.0, 1.0)), u.x), u.y);
 }
+
+// OPTIMIZATION: Reduced from 4 octaves to 3 for clouds/water
 float fbm(vec2 p) {
     float value = 0.0;
     float amplitude = 0.5;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 3; i++) { 
         value += amplitude * noise2(p);
         p *= 2.0;
         amplitude *= 0.5;
@@ -79,13 +92,14 @@ vec3 heightTint(float elevation, vec2 uv) {
   return color * (1.0 + n);
 }
 
+// OPTIMIZATION: Halved loop iterations (32 -> 16) and doubled step size
 float castShadow(vec2 uv, float startElevation, vec3 lightDir) {
   vec2 stepDir = normalize(vec2(lightDir.x, -lightDir.y));
-  float stepPx = 4.0; 
+  float stepPx = 8.0; 
   float stepMeters = stepPx * uMetersPerPixel;
   float tanSun = lightDir.z / length(lightDir.xy);
   float shadow = 1.0;
-  for (int i = 1; i <= 32; i++) {
+  for (int i = 1; i <= 16; i++) {
     float fi = float(i);
     vec2 sampleUv = uv + stepDir * uTexel * stepPx * fi;
     float ground = (elevationAt(sampleUv) - startElevation) * uExaggeration;
@@ -95,37 +109,33 @@ float castShadow(vec2 uv, float startElevation, vec3 lightDir) {
   return shadow;
 }
 
-// ... (uniforms and noise functions remain the same)
-
 void main() {
   vec2 uv = vUv;
   uv.y = 1.0 - uv.y;
 
   float elevation = vElevation;
+  float smoothElevation = mapElevationAt(uv); 
+  
   float water = texture2D(uWater, uv).r;
   float edge = max(fwidth(water), 0.001);
   float waterMask = smoothstep(0.5 - edge, 0.5 + edge, water);
   float coast = 1.0 - smoothstep(0.5, 1.5, abs(water - 0.5) / edge);
-  vec3 normal = terrainNormal(uv, uExaggeration);
+  
+  // OPTIMIZATION: Calculate normal once, reuse for both states
+  vec3 normal = terrainNormal(uv, uExaggeration); 
 
   /* --- MAP STATE --- */
-  float minor = contour(elevation, 50.0, 0.5) * (1.0 - waterMask);
-  float index = contour(elevation, 250.0, 1.0) * (1.0 - waterMask);
-  vec3 mapColor = mix(mix(uFieldColor, uMinorColor, minor), uIndexColor, index);
+  float minor = contour(smoothElevation, 100.0, 1.0) * (1.0 - waterMask);
+  float index = contour(smoothElevation, 500.0, 1.5) * (1.0 - waterMask);
   
-  float lon = mix(uBounds.x, uBounds.y, uv.x);
-  float lat = mix(uBounds.w, uBounds.z, uv.y);
-  float lonGrid = abs(fract(lon * 20.0) - 0.5) * 2.0;
-  float latGrid = abs(fract(lat * 20.0) - 0.5) * 2.0;
-  float grid = max(1.0 - smoothstep(0.0, 0.02, lonGrid), 1.0 - smoothstep(0.0, 0.02, latGrid));
-  mapColor = mix(mapColor, uGridColor, grid * 0.3);
-
+  vec3 mapColor = mix(mix(uFieldColor, uMinorColor, minor), uIndexColor, index);
   mapColor = mix(mapColor, uWaterMapColor, waterMask);
   mapColor = mix(mapColor, uIndexColor, coast * 0.8);
 
+  // Dampen the normal for map hillshade
   vec3 mapLightDir = normalize(vec3(-1.0, 1.0, 1.0));
-  float mapHillshade = clamp(dot(normal, mapLightDir), 0.5, 1.0);
-  mapColor *= mix(1.0, mapHillshade, 0.2);
+  float mapHillshade = clamp(dot(normal, mapLightDir), 0.4, 1.0);
+  mapColor *= mix(1.0, mapHillshade, 0.15);
 
   /* --- REAL STATE --- */
   vec3 lightDir = normalize(vec3(-0.6, 0.6, 0.8));
@@ -161,23 +171,19 @@ void main() {
       realColor = mix(realColor, waterRealColor, waterMask);
   }
 
-  // CLOUDS (Fixed scale and opacity)
+  // CLOUDS
   vec2 cloudUv = uv * 6.0 + vec2(uTime * 0.05, uTime * 0.02); 
   float cloudNoise = fbm(cloudUv);
   
-  // Create distinct fluffy patches
   float cloudMask = smoothstep(0.1, 0.4, cloudNoise);
-  cloudMask *= uReal; // Fade out in map state
+  cloudMask *= uReal; 
   
-  // Shadows cast by the clouds
   float cloudShadow = smoothstep(0.0, 0.3, fbm(cloudUv + vec2(0.05, 0.05)));
   realColor *= mix(0.7, 1.0, cloudShadow);
 
-  // Cloud color and blending
   vec3 cloudColor = uSunColor * 1.2 + uSkyColor * 0.5;
   realColor = mix(realColor, cloudColor, cloudMask * 0.65);
 
-  // Vignette
   realColor *= mix(0.7, 1.0, smoothstep(1.5, 0.3, length(vUv - 0.5)));
 
   /* --- BLEND & FINISH --- */
