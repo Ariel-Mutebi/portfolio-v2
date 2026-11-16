@@ -4,7 +4,7 @@
   --font-sans: var(--font-bricolage);
 }
 
-@theme {
+@theme static {
   --color-*: initial;
 
   --color-ebony-50: #F9FAF9;

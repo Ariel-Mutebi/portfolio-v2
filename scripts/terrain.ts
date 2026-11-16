@@ -28,7 +28,19 @@ const TILE = 256;
 const TILE_URL = 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium';
 const CACHE_DIR = '.cache/terrain';
 const HEIGHTMAP_PATH = 'src/assets/terrain/heightmap.bin';
+const WATERMASK_PATH = 'src/assets/terrain/watermask.bin';
 const META_PATH = 'src/data/terrain.json';
+
+/**
+ * Water detection settings. A pixel counts as flat when every pixel within FLAT_RADIUS
+ * of it differs in elevation by less than FLAT_TOLERANCE meters. The flat mask is then
+ * blurred SMOOTHING_PASSES times with a box of SMOOTHING_RADIUS pixels, which removes
+ * specks and gives the shader a soft edge to threshold at 0.5.
+ */
+const FLAT_RADIUS = 1;
+const FLAT_TOLERANCE = 0.03;
+const SMOOTHING_RADIUS = 3;
+const SMOOTHING_PASSES = 3;
 
 /** Resolves to true if the file exists, false otherwise. Used to skip re-baking. */
 const exists = (path: string): Promise<boolean> =>
@@ -37,6 +49,10 @@ const exists = (path: string): Promise<boolean> =>
 /** Lists the whole numbers from start to end inclusive: range(3, 5) gives [3, 4, 5]. */
 const range = (start: number, end: number): number[] =>
   Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+/** Keeps a value between low and high: clamp(12, 0, 10) gives 10. */
+const clamp = (value: number, low: number, high: number) =>
+  Math.min(Math.max(value, low), high);
 
 /**
  * Converts a longitude and latitude into a pixel position on the world map at a given
@@ -179,6 +195,95 @@ const findExtent = (values: Float32Array): Extent => ({
 });
 
 /**
+ * Finds where the highest pixel sits, as a longitude and latitude.
+ * For this frame it should land near Margherita Peak, 0.38 N, 29.87 E.
+ */
+const locateHighestPoint = (elevations: Float32Array, frame: Frame, extent: Extent): LonLat => {
+  const index = elevations.indexOf(extent.max);
+  return toLonLat(frame.left + (index % WIDTH), frame.top + Math.floor(index / WIDTH), ZOOM);
+};
+
+/**
+ * Combines each pixel with its neighbors along one axis, within `radius` pixels either
+ * side, using `pick` (Math.min or Math.max) and starting from `initial`. Coordinates are
+ * clamped at the frame edges, so border pixels behave as if the frame continued
+ * unchanged beyond them.
+ */
+const windowFilter = (
+  values: Float32Array,
+  radius: number,
+  axis: 'x' | 'y',
+  pick: (a: number, b: number) => number,
+  initial: number,
+) => {
+  const offsets = range(-radius, radius);
+  return Float32Array.from(values, (_, i) => {
+    const col = i % WIDTH;
+    const row = Math.floor(i / WIDTH);
+    return offsets.reduce((best, offset) => {
+      const c = axis === 'x' ? clamp(col + offset, 0, WIDTH - 1) : col;
+      const r = axis === 'y' ? clamp(row + offset, 0, HEIGHT - 1) : row;
+      return pick(best, values[r * WIDTH + c]);
+    }, initial);
+  });
+};
+
+/**
+ * The lowest value in a square around every pixel. A square window can be done as two
+ * cheap passes, one along x and one along y, instead of one expensive two-dimensional pass.
+ */
+const minFilter = (values: Float32Array, radius: number) =>
+  windowFilter(
+    windowFilter(values, radius, 'x', Math.min, Infinity),
+    radius,
+    'y',
+    Math.min,
+    Infinity,
+  );
+
+/** The highest value in a square around every pixel. The counterpart of minFilter. */
+const maxFilter = (values: Float32Array, radius: number) =>
+  windowFilter(
+    windowFilter(values, radius, 'x', Math.max, -Infinity),
+    radius,
+    'y',
+    Math.max,
+    -Infinity,
+  );
+
+/** Averages every pixel with its neighbors in a square, as two passes (x then y). */
+const boxBlur = (values: Float32Array, radius: number) => {
+  const size = 2 * radius + 1;
+  const add = (a: number, b: number) => a + b;
+  const averaged = (axis: 'x' | 'y', input: Float32Array) =>
+    windowFilter(input, radius, axis, add, 0).map((sum) => sum / size);
+  return averaged('y', averaged('x', values));
+};
+
+/**
+ * Returns a soft water field from 0 (land) to 1 (water). Lakes in the elevation data are
+ * flattened to a single height, so a pixel is flat when the spread of elevations around
+ * it is tiny. Blurring the flat mask rounds its corners and erases specks, and the shader
+ * later draws the shoreline where the field crosses 0.5.
+ */
+const detectWater = (elevations: Float32Array) => {
+  const highest = maxFilter(elevations, FLAT_RADIUS);
+  const lowest = minFilter(elevations, FLAT_RADIUS);
+  const flat = Float32Array.from(elevations, (_, i) =>
+    highest[i] - lowest[i] < FLAT_TOLERANCE ? 1 : 0,
+  );
+  return range(1, SMOOTHING_PASSES).reduce((soft) => boxBlur(soft, SMOOTHING_RADIUS), flat);
+};
+
+/** Converts the soft water field (0 to 1) into bytes (0 to 255), the format we store on disk. */
+const toWatermask = (water: Float32Array) =>
+  Uint8Array.from(water, (value) => Math.round(value * 255));
+
+/** The fraction of the frame that is clearly water (field above 0.5), from 0 to 1. */
+const waterShareOf = (water: Float32Array) =>
+  water.filter((value) => value > 0.5).length / water.length;
+
+/**
  * Squeezes each elevation into a whole number from 0 to 65535, so it fits in two bytes.
  * 0 means the lowest point in the frame, and 65535 the highest. The shader undoes this
  * later with mix(minElevation, maxElevation, storedValue).
@@ -211,23 +316,28 @@ const buildMetadata = (frame: Frame, { min, max }: Extent): TerrainMetadata => {
   };
 };
 
-/** Writes the heightmap and its metadata to disk, creating the folders if needed. */
-const writeOutputs = async (quantized: Uint16Array, metadata: TerrainMetadata) => {
+/** Writes the heightmap, the water mask, and the metadata to disk, creating folders if needed. */
+const writeOutputs = async (
+  quantized: Uint16Array,
+  watermask: Uint8Array,
+  metadata: TerrainMetadata,
+) => {
   await mkdir('src/assets/terrain', { recursive: true });
   await mkdir('src/data', { recursive: true });
   await writeFile(HEIGHTMAP_PATH, Buffer.from(quantized.buffer));
+  await writeFile(WATERMASK_PATH, watermask);
   await writeFile(META_PATH, JSON.stringify(metadata, null, 2));
 };
 
 /**
  * The whole pipeline in order: skip if already baked, compute the frame, load the tiles,
- * stitch them, measure the extent, then quantize and write the results.
+ * stitch them, measure the extent, detect water, then quantize and write the results.
  */
 const main = async () => {
   const force = process.argv.includes('--force');
-  const alreadyBaked = (await Promise.all([exists(HEIGHTMAP_PATH), exists(META_PATH)])).every(
-    Boolean,
-  );
+  const alreadyBaked = (
+    await Promise.all([exists(HEIGHTMAP_PATH), exists(WATERMASK_PATH), exists(META_PATH)])
+  ).every(Boolean);
   if (alreadyBaked && !force) {
     console.log('Terrain already baked. Use --force to rebuild.');
     return;
@@ -240,11 +350,17 @@ const main = async () => {
 
   const elevations = stitch(tileGrid, frame);
   const extent = findExtent(elevations);
-  await writeOutputs(quantize(elevations, extent), buildMetadata(frame, extent));
+  const highestPoint = locateHighestPoint(elevations, frame, extent);
   console.log(
     `Elevation ${extent.min.toFixed(0)} to ${extent.max.toFixed(0)} m, ` +
     `${metersPerPixelAt(CENTER.lat, ZOOM).toFixed(1)} m per pixel`,
   );
+  console.log(`Highest point at ${highestPoint.lat.toFixed(3)} N, ${highestPoint.lon.toFixed(3)} E`);
+
+  const water = detectWater(elevations);
+  console.log(`Water covers ${(waterShareOf(water) * 100).toFixed(1)}% of the frame`);
+
+  await writeOutputs(quantize(elevations, extent), toWatermask(water), buildMetadata(frame, extent));
 };
 
 main().catch((error) => {

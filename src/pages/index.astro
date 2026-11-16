@@ -3,6 +3,7 @@ import BaseHead from "../components/BaseHead.astro";
 import Hero from "../components/hero/Hero.svelte";
 import terrain from "../data/terrain.json";
 import heightmapUrl from "../assets/terrain/heightmap.bin?url";
+import watermaskUrl from "../assets/terrain/watermask.bin?url";
 
 const TITLE = "Ariel Mutebi | Home";
 const DESCRIPTION = "A highly-skilled full-stack web developer and TKS innovator.";
@@ -14,6 +15,6 @@ const DESCRIPTION = "A highly-skilled full-stack web developer and TKS innovator
 		<BaseHead title={TITLE} description={DESCRIPTION} />
 	</head>
 	<body class="font-sans bg-ebony-50 cursor-default">
-		<Hero {terrain} {heightmapUrl} client:load />
+		<Hero {terrain} {heightmapUrl} {watermaskUrl} client:load />
 	</body>
 </html>
