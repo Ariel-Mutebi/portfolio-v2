@@ -1,17 +1,19 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
 import Hero from "../components/hero/Hero.svelte";
+import terrain from "../data/terrain.json";
+import heightmapUrl from "../assets/terrain/heightmap.bin?url";
+
+const TITLE = "Ariel Mutebi | Home";
+const DESCRIPTION = "A highly-skilled full-stack web developer and TKS innovator.";
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead
-			title={"Ariel Mutebi - Home"}
-			description={"A highly-skilled full-stack web developer and TKS innovator."}
-		/>
+		<BaseHead title={TITLE} description={DESCRIPTION} />
 	</head>
-	<body class="font-sans min-h-dvh bg-ebony-50">
-		<Hero client:load />
+	<body class="font-sans bg-ebony-50 cursor-default">
+		<Hero {terrain} {heightmapUrl} client:load />
 	</body>
 </html>

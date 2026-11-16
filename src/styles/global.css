@@ -54,4 +54,63 @@
   --color-pollen-800: #94390C;
   --color-pollen-900: #7A2F0D;
   --color-pollen-950: #461602;
+
+  --animate-ambient: ambient 12s ease-in-out infinite alternate;
+  
+  @keyframes ambient {
+    from {
+      background-position: 0% 0%;
+    }
+
+    to {
+      background-position: 100% 100%;
+    }
+  }
 }
+
+@layer components {
+.interactive-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background: radial-gradient(circle 220px at var(--spot-x, 50%) var(--spot-y, 50%),
+        rgb(255 255 255 / 30%),
+        rgb(255 255 255 / 10%) 45%,
+        transparent 75%);
+
+    opacity: 0;
+    transition: opacity 400ms ease;
+  }
+
+  .interactive-card:hover::after {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .interactive-card {
+      animation: none;
+    }
+
+    .interactive-card::after {
+      transition: none;
+    }
+  }
+}
+
+@layer utilities {
+  .reveal-mask {
+    display: block;
+    overflow: hidden;
+  }
+
+  .reveal-text,
+  .magnetic-text,
+  .magnetic-char {
+    display: inline-block;
+  }
+}
+
