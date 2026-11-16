@@ -13,6 +13,7 @@
     watermaskUrl: string;
     normalmapUrl: string;
     shadowmapUrl: string;
+    noisemapUrl: string;
     terrain: TerrainMetadata;
   }
 
@@ -68,8 +69,7 @@
     ></canvas>
 
     <!-- Content Grid -->
-    <div class="relative z-10 w-full h-full grid grid-rows-2 justify-center items-start pointer-events-none">
-      <!-- Added transition classes to the Card wrapper here -->
+    <div class="relative z-10 w-full h-full grid grid-rows-2 justify-center items-start p-5">
       <div 
         class="row-start-2 relative w-full flex justify-center pointer-events-auto transition-opacity duration-1000"
         class:opacity-0={isLoading}

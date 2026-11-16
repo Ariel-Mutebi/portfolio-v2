@@ -8,18 +8,19 @@ import {
   NORMALMAP_PATH,
   SHADOWMAP_PATH,
   META_PATH,
+  NOISE_TEXTURE_PATH,
 } from './terrain/config.ts';
 import { metersPerPixelAt } from './terrain/geo.ts';
 import { computeFrame, loadElevations } from './terrain/tiles.ts';
 import { findExtent, locateHighestPoint, detectWater, waterShareOf, quantize, toWatermask } from './terrain/analysis.ts';
-import { computeNormalMap, computeShadowMap, buildMetadata, writeOutputs } from './terrain/bake.ts';
+import { computeNormalMap, computeShadowMap, buildMetadata, writeOutputs, computeNoiseTexture } from './terrain/bake.ts';
 
 const exists = (path: string): Promise<boolean> =>
   access(path).then(() => true, () => false);
 
 const main = async () => {
   const force = process.argv.includes('--force');
-  const outputs = [HEIGHTMAP_PATH, WATERMASK_PATH, NORMALMAP_PATH, SHADOWMAP_PATH, META_PATH];
+  const outputs = [HEIGHTMAP_PATH, WATERMASK_PATH, NORMALMAP_PATH, SHADOWMAP_PATH, NOISE_TEXTURE_PATH, META_PATH];
   const allExist = (await Promise.all(outputs.map(exists))).every(Boolean);
 
   if (allExist && !force) {
@@ -47,11 +48,15 @@ const main = async () => {
   console.log('Baking shadow map...');
   const shadowmap = computeShadowMap(elevations, EXAGGERATION);
 
+  console.log('Baking noise texture...');
+  const noisemap = computeNoiseTexture(1024);
+
   await writeOutputs(
     quantize(elevations, extent),
     toWatermask(water),
     normalmap,
     shadowmap,
+    noisemap,
     buildMetadata(frame, extent),
   );
 

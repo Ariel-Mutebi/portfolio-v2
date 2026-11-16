@@ -9,11 +9,52 @@ import {
   WATERMASK_PATH,
   NORMALMAP_PATH,
   SHADOWMAP_PATH,
+  NOISE_TEXTURE_PATH,
   META_PATH,
 } from './config.ts';
 import { metersPerPixelAt, toLonLat, clamp } from './geo.ts';
 import type { Frame, Extent } from './types.ts';
 import type { TerrainMetadata } from '../../src/components/hero/types.ts';
+
+const hash = (x: number, y: number) => {
+  const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+  return n - Math.floor(n);
+};
+
+const valueNoise = (x: number, y: number) => {
+  const ix = Math.floor(x), iy = Math.floor(y);
+  const fx = x - ix, fy = y - iy;
+  const ux = fx * fx * (3 - 2 * fx);
+  const uy = fy * fy * (3 - 2 * fy);
+  const n00 = hash(ix, iy), n10 = hash(ix + 1, iy);
+  const n01 = hash(ix, iy + 1), n11 = hash(ix + 1, iy + 1);
+  return (n00 * (1 - ux) + n10 * ux) * (1 - uy) + (n01 * (1 - ux) + n11 * ux) * uy;
+};
+
+const fbm = (x: number, y: number, octaves: number) => {
+  let value = 0, amp = 0.5;
+  for (let i = 0; i < octaves; i++) {
+    value += amp * valueNoise(x, y);
+    x *= 2; y *= 2; amp *= 0.5;
+  }
+  return value;
+};
+
+/** Bakes a tileable noise texture. Stored in the blue channel. */
+export const computeNoiseTexture = (size: number = 1024) => {
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const i = (y * size + x) * 4;
+      const fx = x / size, fy = y / size;
+      data[i + 0] = 0;
+      data[i + 1] = 0;
+      data[i + 2] = Math.round(fbm(fx * 40, fy * 40, 2) * 255);
+      data[i + 3] = 255;
+    }
+  }
+  return data;
+};
 
 export const computeNormalMap = (elevations: Float32Array) => {
   const normals = new Uint8Array(WIDTH * HEIGHT * 4);
@@ -99,6 +140,7 @@ export const writeOutputs = async (
   watermask: Uint8Array,
   normalmap: Uint8Array,
   shadowmap: Uint8Array,
+  noisemap: Uint8Array,
   metadata: TerrainMetadata,
 ) => {
   await mkdir('src/assets/terrain', { recursive: true });
@@ -107,5 +149,6 @@ export const writeOutputs = async (
   await writeFile(WATERMASK_PATH, watermask);
   await writeFile(NORMALMAP_PATH, normalmap);
   await writeFile(SHADOWMAP_PATH, shadowmap);
+  await writeFile(NOISE_TEXTURE_PATH, noisemap);
   await writeFile(META_PATH, JSON.stringify(metadata, null, 2));
 };

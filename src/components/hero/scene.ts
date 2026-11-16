@@ -16,6 +16,7 @@ import {
   UnsignedByteType,
   DoubleSide,
   MathUtils,
+  RepeatWrapping,
 } from 'three';
 import type { TerrainMetadata } from './types.ts';
 import vertexShader from './shaders/fullscreen.vert?raw';
@@ -69,6 +70,18 @@ async function loadShadowTexture(url: string, width: number, height: number) {
   return texture;
 }
 
+async function loadNoiseTexture(url: string) {
+  const data = new Uint8Array(await (await fetch(url)).arrayBuffer());
+  const size = Math.sqrt(data.length / 4);
+  const texture = new DataTexture(data, size, size, RGBAFormat, UnsignedByteType);
+  texture.wrapS = RepeatWrapping;
+  texture.wrapT = RepeatWrapping;
+  texture.minFilter = LinearFilter;
+  texture.magFilter = LinearFilter;
+  texture.needsUpdate = true;
+  return texture;
+}
+
 const readCssColor = (element: HTMLElement, name: string) => {
   const value = getComputedStyle(element).getPropertyValue(name).trim();
   if (!value) throw new Error(`CSS variable ${name} is not defined`);
@@ -82,17 +95,19 @@ interface SceneOptions {
   watermaskUrl: string;
   normalmapUrl: string;
   shadowmapUrl: string;
+  noisemapUrl: string;
 }
 
 export async function createHeroScene(options: SceneOptions) {
-  const { canvas, terrain, heightmapUrl, watermaskUrl, normalmapUrl, shadowmapUrl } = options;
+  const { canvas, terrain, heightmapUrl, watermaskUrl, normalmapUrl, shadowmapUrl, noisemapUrl } = options;
   const color = (name: string) => readCssColor(canvas, name);
 
-  const [heightTexture, waterTexture, normalTexture, shadowTexture] = await Promise.all([
+  const [heightTexture, waterTexture, normalTexture, shadowTexture, noiseTexture] = await Promise.all([
     loadHeightTexture(heightmapUrl, terrain.width, terrain.height),
     loadWaterTexture(watermaskUrl, terrain.width, terrain.height),
     loadNormalTexture(normalmapUrl, terrain.width, terrain.height),
     loadShadowTexture(shadowmapUrl, terrain.width, terrain.height),
+    loadNoiseTexture(noisemapUrl),
   ]);
 
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -102,6 +117,7 @@ export async function createHeroScene(options: SceneOptions) {
     uHeight: { value: heightTexture },
     uNormalMap: { value: normalTexture },
     uShadowMap: { value: shadowTexture },
+    uNoise: { value: noiseTexture },
     uMinElevation: { value: terrain.minElevation },
     uMaxElevation: { value: terrain.maxElevation },
     uFieldColor: { value: color('--color-pollen-50') },

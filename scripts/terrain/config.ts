@@ -12,6 +12,7 @@ export const HEIGHTMAP_PATH = 'src/assets/terrain/heightmap.bin';
 export const WATERMASK_PATH = 'src/assets/terrain/watermask.bin';
 export const NORMALMAP_PATH = 'src/assets/terrain/normalmap.bin';
 export const SHADOWMAP_PATH = 'src/assets/terrain/shadowmap.bin';
+export const NOISE_TEXTURE_PATH = 'src/assets/terrain/noise.bin';
 export const META_PATH = 'src/data/terrain.json';
 
 export const FLAT_RADIUS = 1;
