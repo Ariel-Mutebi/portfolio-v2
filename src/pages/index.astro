@@ -4,9 +4,12 @@ import Hero from "../components/hero/Hero.svelte";
 import terrain from "../data/terrain.json";
 import heightmapUrl from "../assets/terrain/heightmap.bin?url";
 import watermaskUrl from "../assets/terrain/watermask.bin?url";
+import normalmapUrl from "../assets/terrain/normalmap.bin?url";
+import shadowmapUrl from "../assets/terrain/shadowmap.bin?url";
 
 const TITLE = "Ariel Mutebi | Home";
-const DESCRIPTION = "A highly-skilled full-stack web developer and TKS innovator.";
+const DESCRIPTION =
+	"A highly-skilled full-stack web developer and TKS innovator.";
 ---
 
 <!doctype html>
@@ -15,6 +18,13 @@ const DESCRIPTION = "A highly-skilled full-stack web developer and TKS innovator
 		<BaseHead title={TITLE} description={DESCRIPTION} />
 	</head>
 	<body class="font-sans bg-ebony-50 cursor-default">
-		<Hero {terrain} {heightmapUrl} {watermaskUrl} client:load />
+		<Hero
+			{terrain}
+			{heightmapUrl}
+			{watermaskUrl}
+			{normalmapUrl}
+			{shadowmapUrl}
+			client:load
+		/>
 	</body>
 </html>

@@ -7,13 +7,13 @@ import {
   PerspectiveCamera,
   PlaneGeometry,
   RedFormat,
+  RGBAFormat,
   Scene,
   ShaderMaterial,
   Vector2,
   WebGLRenderer,
   Color,
   UnsignedByteType,
-  Vector4,
   DoubleSide,
   MathUtils,
 } from 'three';
@@ -38,7 +38,7 @@ async function loadHeightTexture(url: string, width: number, height: number) {
   texture.magFilter = LinearFilter;
   texture.needsUpdate = true;
   return texture;
-};
+}
 
 async function loadWaterTexture(url: string, width: number, height: number) {
   const mask = new Uint8Array(await (await fetch(url)).arrayBuffer());
@@ -48,7 +48,26 @@ async function loadWaterTexture(url: string, width: number, height: number) {
   texture.unpackAlignment = 1;
   texture.needsUpdate = true;
   return texture;
-};
+}
+
+async function loadNormalTexture(url: string, width: number, height: number) {
+  const data = new Uint8Array(await (await fetch(url)).arrayBuffer());
+  const texture = new DataTexture(data, width, height, RGBAFormat, UnsignedByteType);
+  texture.minFilter = LinearFilter;
+  texture.magFilter = LinearFilter;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+async function loadShadowTexture(url: string, width: number, height: number) {
+  const data = new Uint8Array(await (await fetch(url)).arrayBuffer());
+  const texture = new DataTexture(data, width, height, RedFormat, UnsignedByteType);
+  texture.minFilter = LinearFilter;
+  texture.magFilter = LinearFilter;
+  texture.unpackAlignment = 1;
+  texture.needsUpdate = true;
+  return texture;
+}
 
 const readCssColor = (element: HTMLElement, name: string) => {
   const value = getComputedStyle(element).getPropertyValue(name).trim();
@@ -56,32 +75,45 @@ const readCssColor = (element: HTMLElement, name: string) => {
   return new Color(value);
 };
 
-export async function createHeroScene(options: { canvas: HTMLCanvasElement; terrain: TerrainMetadata; heightmapUrl: string; watermaskUrl: string; }) {
-  const { canvas, terrain, heightmapUrl, watermaskUrl } = options;
+interface SceneOptions {
+  canvas: HTMLCanvasElement;
+  terrain: TerrainMetadata;
+  heightmapUrl: string;
+  watermaskUrl: string;
+  normalmapUrl: string;
+  shadowmapUrl: string;
+}
+
+export async function createHeroScene(options: SceneOptions) {
+  const { canvas, terrain, heightmapUrl, watermaskUrl, normalmapUrl, shadowmapUrl } = options;
   const color = (name: string) => readCssColor(canvas, name);
 
-  const [heightTexture, waterTexture] = await Promise.all([
+  const [heightTexture, waterTexture, normalTexture, shadowTexture] = await Promise.all([
     loadHeightTexture(heightmapUrl, terrain.width, terrain.height),
     loadWaterTexture(watermaskUrl, terrain.width, terrain.height),
+    loadNormalTexture(normalmapUrl, terrain.width, terrain.height),
+    loadShadowTexture(shadowmapUrl, terrain.width, terrain.height),
   ]);
 
   const renderer = new WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(1);
 
   const uniforms = {
     uHeight: { value: heightTexture },
+    uNormalMap: { value: normalTexture },
+    uShadowMap: { value: shadowTexture },
     uMinElevation: { value: terrain.minElevation },
     uMaxElevation: { value: terrain.maxElevation },
     uFieldColor: { value: color('--color-pollen-50') },
     uMinorColor: { value: color('--color-ebony-600') },
     uIndexColor: { value: color('--color-ebony-950') },
+    uWaterMapColor: { value: color('--color-steel-400') },
     uTexel: { value: new Vector2(1 / terrain.width, 1 / terrain.height) },
     uMetersPerPixel: { value: terrain.metersPerPixel },
     uExaggeration: { value: 2.0 },
     uReal: { value: 1.0 },
     uWater: { value: waterTexture },
     uWaterColor: { value: color('--color-steel-500') },
-    uWaterMapColor: { value: color('--color-steel-400') },
     uLowColor: { value: color('--color-viridian-800') },
     uMidColor: { value: color('--color-viridian-500') },
     uRockColor: { value: color('--color-ebony-400') },
@@ -92,7 +124,6 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
     uTime: { value: 0.0 },
   };
 
-  // 1. Massive plane so edges never show when angled
   const planeWidth = 6;
   const planeHeight = 6 * (terrain.height / terrain.width);
   const geometry = new PlaneGeometry(planeWidth, planeHeight, 512, 512);
@@ -104,8 +135,6 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
   const fov = 45;
   const camera = new PerspectiveCamera(fov, 1, 0.1, 200);
 
-  // 2. THE ZOOM LEVEL. 
-  // Increase this to zoom OUT. Decrease this to zoom IN.
   const focusWidth = 4;
   const focusHeight = 4 * (terrain.height / terrain.width);
 
@@ -118,16 +147,13 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
 
     const distH = (focusWidth * 0.5) / (tanHalfFov * aspect);
     const distV = (projectedHeight * 0.5) / tanHalfFov;
-
     const dist = Math.min(distH, distV);
 
     camera.position.set(0, -dist * Math.sin(angleRad), dist * Math.cos(angleRad));
     camera.lookAt(0, 0, 0);
   };
 
-  // PERFORMANCE OPTIMIZATION: Render Throttling
   let isRenderPending = false;
-
   const requestRender = () => {
     if (!isRenderPending) {
       isRenderPending = true;
@@ -143,7 +169,6 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
     renderer.setSize(clientWidth, clientHeight, false);
     camera.aspect = clientWidth / clientHeight;
     camera.updateProjectionMatrix();
-
     updateCamera(1.0 - uniforms.uReal.value);
     requestRender();
   });
@@ -164,7 +189,9 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
       material.dispose();
       heightTexture.dispose();
       waterTexture.dispose();
+      normalTexture.dispose();
+      shadowTexture.dispose();
       renderer.dispose();
     },
   };
-};
+}

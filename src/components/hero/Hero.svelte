@@ -11,22 +11,24 @@
   interface Props {
     heightmapUrl: string;
     watermaskUrl: string;
+    normalmapUrl: string;
+    shadowmapUrl: string;
     terrain: TerrainMetadata;
   }
 
-  const { heightmapUrl, terrain, watermaskUrl }: Props = $props();
+  const props: Props = $props();
   
   let canvas: HTMLCanvasElement;
   let isLoading = $state(true);
   let heroContainer: HTMLElement;
-  let setProgress = (progress: number) => {};
+  let setProgress: (progress: number) => void = () => {};
 
   onMount(() => {
     let isCancelled = false;
     let cleanup = () => {};
     let scrollTrigger: ScrollTrigger | undefined;
 
-    createHeroScene({ canvas, terrain, heightmapUrl, watermaskUrl }).then((scene) => {
+    createHeroScene({ canvas, ...props }).then((scene) => {
       if (isCancelled) {
         scene.dispose();
       } else {

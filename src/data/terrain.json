@@ -1,18 +1,18 @@
 {
   "width": 2048,
   "height": 1152,
-  "minElevation": -294,
-  "maxElevation": 5033,
-  "metersPerPixel": 152.8740565625,
-  "zoom": 10,
+  "minElevation": 464,
+  "maxElevation": 5180,
+  "metersPerPixel": 76.43702828125,
+  "zoom": 11,
   "center": {
     "lat": 0,
     "lon": 29.9
   },
   "bounds": {
-    "west": 28.4930419921875,
-    "east": 31.3055419921875,
-    "north": 0.7909904981540112,
-    "south": -0.7909904981540112
+    "west": 29.196853637695312,
+    "east": 30.603103637695312,
+    "north": 0.3955046715319968,
+    "south": -0.3955046715319968
   }
 }
