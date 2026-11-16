@@ -37,7 +37,7 @@ One fragment shader handles both states via the `uReal` uniform:
 
 ### 4. Scroll wiring (`src/components/hero/Hero.svelte`)
 
-GSAP `ScrollTrigger` pins a sticky viewport over a `200vh` scroll track and drives `setProgress` from `self.progress`. Scrub is set to `1.5` for a smooth, cinematic catch-up when the user scrolls quickly.
+GSAP `ScrollTrigger` pins a sticky viewport over a `200vh` scroll track and drives `setProgress` from `self.progress`. Scrub is set to `3.0` for a smooth, cinematic catch-up when the user scrolls quickly.
 
 ## Tuning cheatsheet
 
@@ -55,4 +55,4 @@ GSAP `ScrollTrigger` pins a sticky viewport over a `200vh` scroll track and driv
 - `pixelRatio` is capped at `1` and `alpha: false` to avoid compositing overhead.
 - All heavy work (normals, shadows, noise) is baked at build time — the shader only does ~5 texture lookups per pixel.
 - Map contours use a mip-biased lookup instead of a 5-tap blur.
-- Redraws are throttled via `requestAnimationFrame` and skipped when `progress` hasn't meaningfully changed.
+- Redraws are throttled via `requestAnimationFrame`.

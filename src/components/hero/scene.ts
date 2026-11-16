@@ -129,7 +129,7 @@ export async function createHeroScene(options: SceneOptions) {
     uExaggeration: { value: 2.0 },
     uReal: { value: 1.0 },
     uWater: { value: waterTexture },
-    uWaterColor: { value: color('--color-steel-500') },
+    uWaterColor: { value: color('--color-steel-950') },
     uLowColor: { value: color('--color-viridian-800') },
     uMidColor: { value: color('--color-viridian-500') },
     uRockColor: { value: color('--color-ebony-400') },

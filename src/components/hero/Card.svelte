@@ -50,7 +50,7 @@
         .toArray<HTMLElement>('.magnetic-text')
         .map((element) =>
           SplitText.create(element, {
-            type: 'chars',
+            type: 'words,chars',
             charsClass: 'magnetic-char'
           })
         );
