@@ -121,7 +121,6 @@ export async function createHeroScene(options: SceneOptions) {
     uSunColor: { value: color('--color-pollen-100').multiplyScalar(0.9) },
     uAmbientColor: { value: color('--color-steel-700').multiplyScalar(0.4) },
     uSkyColor: { value: color('--color-steel-100') },
-    uTime: { value: 0.0 },
   };
 
   const planeWidth = 6;

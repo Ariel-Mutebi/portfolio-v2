@@ -40,7 +40,7 @@
           trigger: heroContainer,
           start: "top top",
           end: "bottom bottom",
-          scrub: 5.0,
+          scrub: 3.0,
           onUpdate: (self) => {
             setProgress(self.progress);
           }

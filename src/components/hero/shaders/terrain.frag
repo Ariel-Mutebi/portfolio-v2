@@ -1,6 +1,7 @@
 uniform sampler2D uHeight;
 uniform sampler2D uNormalMap;
 uniform sampler2D uShadowMap;
+uniform sampler2D uNoise;
 uniform float uMinElevation;
 uniform float uMaxElevation;
 uniform vec3 uFieldColor;
@@ -22,20 +23,14 @@ uniform vec3 uSnowColor;
 uniform vec3 uSunColor;
 uniform vec3 uAmbientColor;
 uniform vec3 uSkyColor;
-uniform float uTime;
 
 float elevationAt(vec2 uv) {
   return mix(uMinElevation, uMaxElevation, texture2D(uHeight, uv).r);
 }
 
+// Single mip-biased lookup replaces the 5-tap box blur
 float mapElevationAt(vec2 uv) {
-  vec2 offset = uTexel * 3.0;
-  float center = elevationAt(uv);
-  float n = elevationAt(uv - vec2(0.0, offset.y));
-  float s = elevationAt(uv + vec2(0.0, offset.y));
-  float e = elevationAt(uv + vec2(offset.x, 0.0));
-  float w = elevationAt(uv - vec2(offset.x, 0.0));
-  return (center * 2.0 + n + s + e + w) / 6.0;
+  return mix(uMinElevation, uMaxElevation, texture2D(uHeight, uv, 3.0).r);
 }
 
 float contour(float elevation, float interval, float thicknessPx) {
@@ -48,38 +43,11 @@ float contour(float elevation, float interval, float thicknessPx) {
   return line * crowded;
 }
 
-vec2 hash2(vec2 p) {
-  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
-  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
-}
-
-float noise2(vec2 p) {
-  vec2 i = floor(p);
-  vec2 f = fract(p);
-  vec2 u = f * f * (3.0 - 2.0 * f);
-  return mix(mix(dot(hash2(i + vec2(0.0, 0.0)), f - vec2(0.0, 0.0)),
-                 dot(hash2(i + vec2(1.0, 0.0)), f - vec2(1.0, 0.0)), u.x),
-             mix(dot(hash2(i + vec2(0.0, 1.0)), f - vec2(0.0, 1.0)),
-                 dot(hash2(i + vec2(1.0, 1.0)), f - vec2(1.0, 1.0)), u.x), u.y);
-}
-
-float fbm(vec2 p) {
-  float value = 0.0;
-  float amplitude = 0.5;
-  for (int i = 0; i < 2; i++) {
-    value += amplitude * noise2(p);
-    p *= 2.0;
-    amplitude *= 0.5;
-  }
-  return value;
-}
-
-vec3 heightTint(float elevation, vec2 uv) {
-  float n = fbm(uv * 40.0) * 0.15;
+vec3 heightTint(float elevation, float noise) {
   vec3 color = mix(uLowColor, uMidColor, smoothstep(800.0, 2400.0, elevation));
   color = mix(color, uRockColor, smoothstep(2600.0, 3600.0, elevation));
-  color = mix(color, uSnowColor, smoothstep(4000.0 + n * 1000.0, 4600.0 + n * 1000.0, elevation));
-  return color * (1.0 + n);
+  color = mix(color, uSnowColor, smoothstep(4000.0 + noise * 1000.0, 4600.0 + noise * 1000.0, elevation));
+  return color * (1.0 + noise * 0.15);
 }
 
 void main() {
@@ -88,15 +56,11 @@ void main() {
 
   float elevation = vElevation;
 
-  // Decode the baked normal map (0..1 -> -1..1)
   vec3 rawNormal = texture2D(uNormalMap, uv).xyz * 2.0 - 1.0;
   rawNormal = normalize(rawNormal);
-
-  // Two flavours of normal: exaggerated for 3D lighting, gentle for the map hillshade
   vec3 realNormal = normalize(vec3(rawNormal.xy * uExaggeration, rawNormal.z));
   vec3 mapNormal  = normalize(vec3(rawNormal.xy * 0.1, rawNormal.z));
 
-  // Baked shadow (1.0 = lit, 0.0 = shadowed)
   float shadow = texture2D(uShadowMap, uv).r;
 
   float water = texture2D(uWater, uv).r;
@@ -128,7 +92,9 @@ void main() {
     float direct = clamp(dot(realNormal, lightDir) / lightDir.z, 0.0, 1.6);
     float steep = 1.0 - realNormal.z;
 
-    vec3 albedo = heightTint(elevation, uv);
+    // Tint noise is still used to break up the flat terrain colors
+    float tintNoise = texture2D(uNoise, uv * 40.0).b;
+    vec3 albedo = heightTint(elevation, tintNoise);
     albedo = mix(albedo, uRockColor, smoothstep(0.2, 0.5, steep));
 
     vec3 groundAmbient = uLowColor * 0.1;
@@ -138,34 +104,14 @@ void main() {
     vec3 light = ambient + uSunColor * direct * shadow;
     realColor = albedo * light;
 
-    // REALISTIC WATER
+    // FLAT WATER (no waves) — still looks good thanks to Fresnel
     if (waterMask > 0.0) {
-      vec2 waveUv = vWorldPosition.xy * 40.0;
-      float wave = fbm(waveUv) * 0.5;
-
       vec3 viewDir = normalize(cameraPosition - vWorldPosition);
       float fresnel = pow(1.0 - max(dot(vec3(0.0, 0.0, 1.0), viewDir), 0.0), 4.0);
       vec3 waterAlbedo = mix(uWaterColor, uSkyColor, 0.4 + fresnel * 0.6);
-
-      vec3 halfVec = normalize(lightDir + viewDir);
-      float spec = pow(max(dot(vec3(0.0, 0.0, 1.0), halfVec), 0.0), 40.0) * wave;
-
-      vec3 waterRealColor = waterAlbedo + (uSunColor * spec * 0.5);
-      waterRealColor *= mix(0.5, 1.0, shadow);
-
+      vec3 waterRealColor = waterAlbedo * mix(0.5, 1.0, shadow);
       realColor = mix(realColor, waterRealColor, waterMask);
     }
-
-    // CLOUDS
-    vec2 cloudUv = uv * 6.0 + vec2(uTime * 0.05, uTime * 0.02);
-    float cloudNoise = fbm(cloudUv);
-    float cloudMask = smoothstep(0.1, 0.4, cloudNoise) * uReal;
-
-    float cloudShadow = smoothstep(0.0, 0.3, fbm(cloudUv + vec2(0.05, 0.05)));
-    realColor *= mix(0.7, 1.0, cloudShadow);
-
-    vec3 cloudColor = uSunColor * 1.2 + uSkyColor * 0.5;
-    realColor = mix(realColor, cloudColor, cloudMask * 0.65);
 
     realColor *= mix(0.7, 1.0, smoothstep(1.5, 0.3, length(vUv - 0.5)));
   }
