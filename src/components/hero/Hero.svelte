@@ -57,7 +57,7 @@
   });
 </script>
 
-<header bind:this={heroContainer}  class="relative min-h-[400vh] bg-ebony-50">
+<header bind:this={heroContainer}  class="relative min-h-[200vh] bg-ebony-50">
   <div class="sticky top-0 h-dvh w-full overflow-hidden">
     
     <!-- Canvas Background -->
