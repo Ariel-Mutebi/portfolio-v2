@@ -77,7 +77,7 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
     uIndexColor: { value: color('--color-ebony-600') },
     uTexel: { value: new Vector2(1 / terrain.width, 1 / terrain.height) },
     uMetersPerPixel: { value: terrain.metersPerPixel },
-    uExaggeration: { value: 1.5 },
+    uExaggeration: { value: 2.0 },
     uReal: { value: 1.0 },
     uWater: { value: waterTexture },
     uWaterColor: { value: color('--color-steel-500') },
@@ -94,9 +94,9 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
     uTime: { value: 0.0 },
   };
 
-  // Scale up the plane significantly to prevent edges showing when angled
-  const planeWidth = 4;
-  const planeHeight = 4 * (terrain.height / terrain.width);
+  // 1. Massive plane so edges never show when angled
+  const planeWidth = 6;
+  const planeHeight = 6 * (terrain.height / terrain.width);
   const geometry = new PlaneGeometry(planeWidth, planeHeight, 512, 512);
 
   const material = new ShaderMaterial({ uniforms, vertexShader, fragmentShader, side: DoubleSide });
@@ -104,25 +104,24 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
   scene.add(new Mesh(geometry, material));
 
   const fov = 45;
-  const camera = new PerspectiveCamera(fov, 1, 0.1, 100);
+  const camera = new PerspectiveCamera(fov, 1, 0.1, 200);
 
-  /**
-   * Dynamically calculates camera position to ensure the plane always covers the screen.
-   * @param progress 0.0 = angled 3D view, 1.0 = top-down map view
-   */
+  // 2. THE ZOOM LEVEL. 
+  // Increase this to zoom OUT. Decrease this to zoom IN.
+  const focusWidth = 4;
+  const focusHeight = 4 * (terrain.height / terrain.width);
+
   const updateCamera = (progress: number) => {
     const aspect = canvas.clientWidth / canvas.clientHeight;
     const tanHalfFov = Math.tan(fov * Math.PI / 360);
 
-    // Progress goes from 0 (angled) to 1 (flat)
     const angleRad = MathUtils.lerp(MathUtils.degToRad(35), 0, progress);
+    const projectedHeight = focusHeight * Math.cos(angleRad);
 
-    // Calculate required distance to cover screen vertically (foreshortened) and horizontally
-    const dV = (planeHeight * Math.cos(angleRad)) / (2 * tanHalfFov);
-    const dH = planeWidth / (2 * tanHalfFov * aspect);
+    const distH = (focusWidth * 0.5) / (tanHalfFov * aspect);
+    const distV = (projectedHeight * 0.5) / tanHalfFov;
 
-    // Use the minimum distance to ensure coverage, *0.85 gives a bit of margin
-    const dist = Math.min(dV, dH) * 0.85;
+    const dist = Math.min(distH, distV);
 
     camera.position.set(0, -dist * Math.sin(angleRad), dist * Math.cos(angleRad));
     camera.lookAt(0, 0, 0);
@@ -134,18 +133,15 @@ export async function createHeroScene(options: { canvas: HTMLCanvasElement; terr
     camera.aspect = clientWidth / clientHeight;
     camera.updateProjectionMatrix();
 
-    // Re-run camera calculation on resize
     updateCamera(1.0 - uniforms.uReal.value);
     renderer.render(scene, camera);
   });
   observer.observe(canvas);
 
-  // Initial render setup
-  updateCamera(0); // Start angled
+  updateCamera(0);
   renderer.render(scene, camera);
 
   return {
-    // Expose this so you can hook it up to a scroll event!
     setProgress: (progress: number) => {
       uniforms.uReal.value = 1.0 - progress;
       updateCamera(progress);
