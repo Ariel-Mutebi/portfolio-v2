@@ -16,7 +16,7 @@ export const NOISE_TEXTURE_PATH = 'src/assets/terrain/noise.bin';
 export const META_PATH = 'src/data/terrain.json';
 
 export const FLAT_RADIUS = 1;
-export const FLAT_TOLERANCE = 0.03;
+export const FLAT_TOLERANCE = 0.02;
 export const SMOOTHING_RADIUS = 3;
 export const SMOOTHING_PASSES = 3;
 

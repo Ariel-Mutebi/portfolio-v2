@@ -3,6 +3,13 @@
   import gsap from 'gsap';
   import { SplitText } from 'gsap/SplitText';
 
+  interface Props {
+    name: string;
+    titles: string;
+  }
+
+  const { name, titles }: Props = $props();
+
   let card: HTMLElement;
 
   onMount(() => {
@@ -163,7 +170,6 @@
       card.addEventListener('pointermove', handleCardTilt);
       card.addEventListener('pointerleave', resetCardTilt);
 
-      // NEW: clean up the additional event listeners
       return () => {
         card.removeEventListener('pointermove', handleCardTilt);
         card.removeEventListener('pointerleave', resetCardTilt);
@@ -181,14 +187,10 @@
     from-ebony-50 via-ebony-100 to-ebony-200 bg-size-[200%_200%] animate-ambient will-change-transform"
 >
   <h1 class="text-6xl sm:text-8xl text-ebony-950 font-extrabold reveal-mask">
-    <span class="reveal-text magnetic-text">
-      Ariel Robert Mutebi
-    </span>
+    <span class="reveal-text magnetic-text">{name}</span>
   </h1>
 
   <h3 class="text-xl sm:text-2xl text-ebony-900 reveal-mask">
-    <span class="reveal-text magnetic-text">
-      Full-stack web developer | TKS Innovator | Ex-Mapka
-    </span>
+    <span class="reveal-text magnetic-text">{titles}</span>
   </h3>
 </hgroup>

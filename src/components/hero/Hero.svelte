@@ -3,15 +3,19 @@
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
-  import Card from './Card.svelte';
   import { createHeroScene } from './scene.ts';
   import type { TerrainMetadata } from './types.ts';
-  import MapFrame from './MapFrame.svelte';
+
+  import Card from './Card.svelte';
   import Caption from './Caption.svelte';
+  import MapFrame from './MapFrame.svelte';
 
   gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 
   interface Props {
+    name: string;
+    titles: string;
+    caption: string;
     heightmapUrl: string;
     watermaskUrl: string;
     normalmapUrl: string;
@@ -19,9 +23,8 @@
     noisemapUrl: string;
     terrain: TerrainMetadata;
   }
-  const props: Props = $props();
 
-  const CAPTION = 'Ridgeline — Topographic Study No. 01';
+  const { name, titles, caption, ...sceneProps }: Props = $props();
 
   let heroContainer: HTMLElement;
   let stageEl: HTMLDivElement;
@@ -37,7 +40,7 @@
     let tl: gsap.core.Timeline | undefined;
     let sceneDispose: (() => void) | undefined;
 
-    createHeroScene({ canvas, ...props }).then((scene) => {
+    createHeroScene({ canvas, ...sceneProps }).then((scene) => {
       if (cancelled) { scene.dispose(); return; }
       sceneDispose = scene.dispose;
       isLoading = false;
@@ -62,23 +65,23 @@
         onUpdate: () => scene.setProgress(sceneProxy.p),
       }, 0);
 
-      // ── 2 · background + card shrink #1 (200 → 214vh)
-      tl.to(stageEl, { scale: 0.90, duration: 14, ease: 'none' }, 200);
+      // ── 2 · background + card shrink #1 (200 → 210vh)
+      tl.to(stageEl, { scale: 0.90, duration: 10, ease: 'none' }, 200);
 
-      // ── 3 · caption scrambles in (216 → 234vh)
+      // ── 3 · caption scrambles in (220 → 240vh)
       tl.to(captionEl, {
         scrambleText: {
-          text: CAPTION,
+          text: caption,
           chars: 'upperCase',
           speed: 0.4,
           revealDelay: 0.05,
         },
-        duration: 18,
+        duration: 20,
         ease: 'none',
-      }, 216);
+      }, 220);
 
-      // ── 4 · background + card shrink #2 (236 → 250vh)
-      tl.to(stageEl, { scale: 0.828, duration: 14, ease: 'none' }, 236);
+      // ── 4 · background + card shrink #2 (230 → 250vh)
+      tl.to(stageEl, { scale: 0.80, duration: 20, ease: 'none' }, 230);
 
       // ── 4b · frame draws in (240 → 250vh)
       tl.to(frameProxy, {
@@ -128,7 +131,7 @@
 
       <!-- Caption: Pushed into the bottom 4% padding gap, inside the frame -->
       <div class="absolute inset-x-0 bottom-[-5%] z-20 flex justify-center">
-        <Caption text={CAPTION} bind:el={captionEl} />
+        <Caption text={caption} bind:el={captionEl} />
       </div>
 
       <!-- Card -->
@@ -138,7 +141,7 @@
           class:opacity-0={isLoading}
           class:opacity-100={!isLoading}
         >
-          <Card />
+          <Card {name} {titles} />
         </div>
       </div>
     </div>

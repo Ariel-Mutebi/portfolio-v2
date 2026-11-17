@@ -1,6 +1,7 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
 import Hero from "../components/hero/Hero.svelte";
+import page from "../content/index.json";
 import terrain from "../data/terrain.json";
 import heightmapUrl from "../assets/terrain/heightmap.bin?url";
 import watermaskUrl from "../assets/terrain/watermask.bin?url";
@@ -8,18 +9,17 @@ import normalmapUrl from "../assets/terrain/normalmap.bin?url";
 import shadowmapUrl from "../assets/terrain/shadowmap.bin?url";
 import noisemapUrl from "../assets/terrain/noise.bin?url";
 
-const TITLE = "Ariel Mutebi | Home";
-const DESCRIPTION =
-	"A highly-skilled full-stack web developer and TKS innovator.";
+const { hero } = page;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={TITLE} description={DESCRIPTION} />
+		<BaseHead title={`${hero.name} | Home`} description={hero.titles} />
 	</head>
 	<body class="font-sans bg-ebony-50 cursor-default">
 		<Hero
+			{...hero}
 			{terrain}
 			{heightmapUrl}
 			{watermaskUrl}
@@ -28,6 +28,5 @@ const DESCRIPTION =
 			{noisemapUrl}
 			client:load
 		/>
-		<div class="h-dvh bg-steel-100"></div>
 	</body>
 </html>
