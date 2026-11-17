@@ -87,6 +87,13 @@
         ease: 'none',
         onUpdate: () => { frameProgress = frameProxy.p; },
       }, 240);
+
+      // ── 5 · Final buffer (250 → 300vh)
+      // Holds the fully completed composition.
+      tl.to({}, {
+        duration: 50,
+        ease: 'none',
+      });
     });
 
     return () => {
@@ -98,7 +105,7 @@
   });
 </script>
 
-<header bind:this={heroContainer} class="relative min-h-[250vh] bg-ebony-100">
+<header bind:this={heroContainer} class="relative h-[300vh] bg-ebony-100">
   <div class="sticky top-0 h-dvh w-full overflow-hidden">
     
     <!-- Stage: everything inside here scales together -->
