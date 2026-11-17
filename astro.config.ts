@@ -20,5 +20,11 @@ export default defineConfig({
             cssVariable: '--font-bricolage',
             fallbacks: ['sans-serif'],
         },
+        {
+            provider: fontProviders.google(),
+            name: 'JetBrains Mono',
+            cssVariable: '--font-jetbrains',
+            fallbacks: ['monospace']
+        }
     ],
 });

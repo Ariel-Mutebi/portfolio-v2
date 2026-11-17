@@ -6,7 +6,7 @@
   let { text, el = $bindable() }: Props = $props();
 </script>
 
-<span class="relative inline-block whitespace-nowrap font-mono text-xs uppercase tracking-[0.18em] text-ebony-700 sm:text-sm">
+<span class="relative hidden [@media(min-width:480px)]:inline-block whitespace-nowrap font-mono text-xs uppercase tracking-[0.18em] text-ebony-700 sm:text-sm">
   <!-- sizing twin: reserves layout for the full string -->
   <span class="invisible select-none" aria-hidden="true">{text}</span>
 
