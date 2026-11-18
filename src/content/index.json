@@ -3,5 +3,172 @@
     "name": "Ariel Robert Mutebi",
     "titles": "Full-stack web developer | TKS Innovator | Ex-Mapka",
     "caption": "The Rwenzoris and the Albertine Rift, western Uganda"
-  }
+  },
+  "skill-sets": [
+    {
+      "skill-set": "Frontend",
+      "skills": [
+        {
+          "name": "Svelte",
+          "level": 2,
+          "link": "/skills/svelte"
+        },
+        {
+          "name": "React",
+          "level": 2,
+          "link": "/skills/react"
+        },
+        {
+          "name": "Astro",
+          "level": 2,
+          "link": "/skills/astro"
+        },
+        {
+          "name": "Tailwind",
+          "level": 2,
+          "link": "/skills/tailwind"
+        },
+        {
+          "name": "Figma",
+          "level": 2,
+          "link": "/skills/figma"
+        },
+        {
+          "name": "GSAP",
+          "level": 1,
+          "link": "/skills/gsap"
+        },
+        {
+          "name": "ThreeJS",
+          "level": 0,
+          "link": "/skills/three-js"
+        }
+      ]
+    },
+    {
+      "skill-set": "Backend",
+      "skills": [
+        {
+          "name": "Node",
+          "level": 2,
+          "link": "/skills/node"
+        },
+        {
+          "name": "Fastify",
+          "level": 2,
+          "link": "/skills/fastify"
+        },
+        {
+          "name": "REST APIs",
+          "level": 2,
+          "link": "/skills/rest-apis"
+        },
+        {
+          "name": "tRPC",
+          "level": 2,
+          "link": "/skills/trpc"
+        },
+        {
+          "name": "PostgreSQL",
+          "level": 2,
+          "link": "/skills/postgresql"
+        },
+        {
+          "name": "Prisma ORM",
+          "level": 2,
+          "link": "/skills/prisma-orm"
+        },
+        {
+          "name": "Drizzle ORM",
+          "level": 2,
+          "link": "/skills/drizzle-orm"
+        },
+        {
+          "name": "Background Jobs",
+          "level": 2,
+          "link": "/skills/background-jobs"
+        },
+        {
+          "name": "BullMQ",
+          "level": 2,
+          "link": "/skills/bullmq"
+        },
+        {
+          "name": "Microservices",
+          "level": 2,
+          "link": "/skills/microservices"
+        },
+        {
+          "name": "S3-compatible Object Storage",
+          "level": 2,
+          "link": "/skills/object-storage"
+        },
+        {
+          "name": "Redis",
+          "level": 1,
+          "link": "/skills/redis"
+        }
+      ]
+    },
+    {
+      "skill-set": "Infra",
+      "skills": [
+        {
+          "name": "Docker",
+          "level": 2,
+          "link": "/skills/docker"
+        },
+        {
+          "name": "Docker Compose",
+          "level": 2,
+          "link": "/skills/docker-compose"
+        },
+        {
+          "name": "Github Actions",
+          "level": 2,
+          "link": "/skills/github-actions"
+        },
+        {
+          "name": "Dokploy",
+          "level": 2,
+          "link": "/skills/dokploy"
+        },
+        {
+          "name": "Cloudflare R2",
+          "level": 2,
+          "link": "/skills/cloudflare-r2"
+        },
+        {
+          "name": "Managing a VPS",
+          "level": 1,
+          "link": "/skills/vps"
+        }
+      ]
+    },
+    {
+      "skill-set": "Machine Learning",
+      "skills": [
+        {
+          "name": "Python",
+          "level": 0,
+          "link": "/skills/python"
+        },
+        {
+          "name": "CNNs",
+          "level": 0,
+          "link": "/skills/cnns"
+        },
+        {
+          "name": "Embeddings",
+          "level": 0,
+          "link": "/skills/embeddings"
+        },
+        {
+          "name": "Spatially-Adaptive Density Crawlers",
+          "level": 0,
+          "link": "/skills/crawlers"
+        }
+      ]
+    }
+  ]
 }
