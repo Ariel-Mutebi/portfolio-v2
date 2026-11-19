@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import me from "../../assets/me.jpg";
 import type { SkillSet } from "./types.ts";
+import styles from "./Dossier.module.css";
 
 interface Props {
   skillSets: SkillSet[];
@@ -10,15 +11,12 @@ interface Props {
 const { skillSets } = Astro.props;
 ---
 
-<div
-  class="h-dvh p-10
-    bg-[
-      linear-gradient(to_bottom,var(--color-ebony-50)_0%,transparent_45%),
-      radial-gradient(ellipse_at_100%_50%,white_0%,var(--color-ebony-50)_100%)
-    ]"
->
-  <div class="w-[min(100%,calc((100dvh-5rem)*3/2))] aspect-3/2 mx-auto grid sm:grid-cols-2 md:border border-ebony-200">
-    <aside class="w-full p-5 aspect-3/4 bg-none md:bg-[linear-gradient(to_left,rgb(255_233_167/80%)_0%,color-mix(in_srgb,var(--color-pollen-100)_80%,transparent)_15%,color-mix(in_srgb,var(--color-pollen-200)_80%,transparent)_100%)]">
+<div data-dossier class:list={["h-dvh p-10", styles.backdrop]}>
+  <div class="w-[min(100%,calc((100dvh-5rem)*3/2))] aspect-3/2 mx-auto grid sm:grid-cols-2 perspective-[1800px]">
+    <aside
+      data-page
+      class:list={["w-full p-5 aspect-3/4 origin-right transform-3d will-change-transform", styles.pageLeft]}
+    >
       <figure class="grid p-4 gap-3 w-88 border border-ebony-200 bg-linear-to-l from-ebony-50 to-ebony-100">
         <div class="relative w-80 aspect-3/4">
           <Image
@@ -27,7 +25,7 @@ const { skillSets } = Astro.props;
             format="webp"
             class:list="w-full h-full object-cover"
           />
-          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_100%_50%,color-mix(in_srgb,var(--color-ebony-100)_20%,transparent)_0%,color-mix(in_srgb,var(--color-ebony-600)_20%,transparent)_100%)] pointer-events-none"></div>
+          <div class:list={["absolute inset-0 pointer-events-none", styles.photoShade]}></div>
         </div>
 
         <figcaption class="text-sm text-ebony-600">
@@ -35,6 +33,28 @@ const { skillSets } = Astro.props;
         </figcaption>
       </figure>
     </aside>
-    <article class="w-full aspect-3/4 bg-none md:bg-[linear-gradient(to_left,color-mix(in_srgb,var(--color-pollen-100)_80%,transparent)_0%,color-mix(in_srgb,var(--color-pollen-200)_80%,transparent)_100%)]"></article>
+    <article class:list={["w-full aspect-3/4", styles.pageRight]}></article>
   </div>
 </div>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.fromTo(
+    "[data-page]",
+    { rotateY: 80 },
+    {
+      rotateY: 0,
+      ease: "none",
+      scrollTrigger: {
+        trigger: "[data-dossier]",
+        start: "top bottom",
+        end: "top 20%",
+        scrub: true,
+      },
+    },
+  );
+</script>
