@@ -27,7 +27,7 @@ const { skillSets } = Astro.props;
           styles.figure,
         ]}
       >
-        <div class="relative w-full md:aspect-3/4">
+        <div class="relative w-full aspect-3/4">
           <Image
             src={me}
             alt="Man wearing hard hat posing at a construction site"
@@ -42,14 +42,26 @@ const { skillSets } = Astro.props;
           ></div>
         </div>
 
-        <figcaption class="text-sm text-ebony-600">
+        <figcaption class="text-xs text-ebony-600">
           Me visiting the construction site of a disaster-recovery data centre
         </figcaption>
       </figure>
     </aside>
-    <article class:list={["w-full aspect-3/4 relative", styles.pageRight]}>
-      <Image src={holder} alt="" format="svg" class="hidden md:block absolute bottom-0 inset-x-0 w-full" />
-    </article>
+
+    <div class:list={["w-full md:aspect-3/4 relative p-4 grid items-end", styles.pageRight]}>
+      <Image
+        src={holder}
+        alt=""
+        format="svg"
+        class="hidden md:block absolute bottom-0 inset-x-0 w-full"
+      />
+      <article class="border border-ebony-200 bg-linear-to-l from-ebony-50 to-ebony-100 p-6 pb-20">
+        <hgroup class="grid gap-1">
+          <h2 class="font-light text-3xl text-ebony-800 underline">Specification Sheet</h2>
+          <p class="font-light text-xs text-ebony-600">Click on a skill to see where I've used it</p>
+        </hgroup>
+      </article>
+    </div>
   </div>
 </div>
 
