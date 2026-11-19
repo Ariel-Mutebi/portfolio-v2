@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+import me from "../../assets/me.jpg";
 import type { SkillSet } from "./types.ts";
 
 interface Props {
@@ -15,8 +17,24 @@ const { skillSets } = Astro.props;
       radial-gradient(ellipse_at_100%_50%,white_0%,var(--color-ebony-50)_100%)
     ]"
 >
-  <div class="w-[min(100%,calc((100dvh-5rem)*3/2))] aspect-3/2 mx-auto border grid grid-cols-2">
-    <aside class="w-full aspect-3/4 bg-[linear-gradient(to_left,rgb(255_233_167/80%)_0%,color-mix(in_srgb,var(--color-pollen-100)_80%,transparent)_15%,color-mix(in_srgb,var(--color-pollen-200)_80%,transparent)_100%)]"></aside>
-    <article class="w-full aspect-3/4 bg-[linear-gradient(to_left,color-mix(in_srgb,var(--color-pollen-100)_80%,transparent)_0%,color-mix(in_srgb,var(--color-pollen-200)_80%,transparent)_100%)]"></article>
+  <div class="w-[min(100%,calc((100dvh-5rem)*3/2))] aspect-3/2 mx-auto grid sm:grid-cols-2 md:border border-ebony-200">
+    <aside class="w-full p-5 aspect-3/4 bg-none md:bg-[linear-gradient(to_left,rgb(255_233_167/80%)_0%,color-mix(in_srgb,var(--color-pollen-100)_80%,transparent)_15%,color-mix(in_srgb,var(--color-pollen-200)_80%,transparent)_100%)]">
+      <figure class="grid p-4 gap-3 w-88 border border-ebony-200 bg-linear-to-l from-ebony-50 to-ebony-100">
+        <div class="relative w-80 aspect-3/4">
+          <Image
+            src={me}
+            alt="Man wearing hard hat posing at a construction site"
+            format="webp"
+            class:list="w-full h-full object-cover"
+          />
+          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_100%_50%,color-mix(in_srgb,var(--color-ebony-100)_20%,transparent)_0%,color-mix(in_srgb,var(--color-ebony-600)_20%,transparent)_100%)] pointer-events-none"></div>
+        </div>
+
+        <figcaption class="text-sm text-ebony-600">
+          Me visiting the construction site of a disaster-recovery data centre
+        </figcaption>
+      </figure>
+    </aside>
+    <article class="w-full aspect-3/4 bg-none md:bg-[linear-gradient(to_left,color-mix(in_srgb,var(--color-pollen-100)_80%,transparent)_0%,color-mix(in_srgb,var(--color-pollen-200)_80%,transparent)_100%)]"></article>
   </div>
 </div>
