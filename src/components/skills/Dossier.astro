@@ -1,8 +1,9 @@
 ---
 import { Image } from "astro:assets";
 import me from "../../assets/me.jpg";
-import type { SkillSet } from "./types.ts";
+import holder from "../../assets/holder.svg";
 import styles from "./Dossier.module.css";
+import type { SkillSet } from "./types.ts";
 
 interface Props {
   skillSets: SkillSet[];
@@ -16,7 +17,7 @@ const { skillSets } = Astro.props;
     <aside
       data-page
       class:list={[
-        "w-full p-5 aspect-3/4 origin-right transform-3d will-change-transform",
+        "w-full p-5 md:aspect-3/4 origin-right transform-3d will-change-transform",
         styles.pageLeft,
       ]}
     >
@@ -26,12 +27,12 @@ const { skillSets } = Astro.props;
           styles.figure,
         ]}
       >
-        <div class="relative w-full aspect-3/4">
+        <div class="relative w-full md:aspect-3/4">
           <Image
             src={me}
             alt="Man wearing hard hat posing at a construction site"
             format="webp"
-            class:list="w-full h-full object-cover"
+            class="w-full h-full object-cover"
           />
           <div
             class:list={[
@@ -46,7 +47,9 @@ const { skillSets } = Astro.props;
         </figcaption>
       </figure>
     </aside>
-    <article class:list={["w-full aspect-3/4", styles.pageRight]}></article>
+    <article class:list={["w-full aspect-3/4 relative", styles.pageRight]}>
+      <Image src={holder} alt="" format="svg" class="hidden md:block absolute bottom-0 inset-x-0 w-full" />
+    </article>
   </div>
 </div>
 
