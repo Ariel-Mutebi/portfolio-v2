@@ -9,8 +9,8 @@
   background: none;
 }
 
-/* Tailwind's md breakpoint is 48rem */
-@media (min-width: 48rem) {
+/* Tailwind's lg breakpoint is 64rem */
+@media (min-width: 64rem) {
   .pageLeft {
     background: linear-gradient(to left,
         rgb(255 233 167) 0%,

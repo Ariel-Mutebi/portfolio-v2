@@ -13,12 +13,12 @@ interface Props {
 const { skillSets } = Astro.props;
 ---
 
-<div data-dossier class:list={["min-h-dvh p-10", styles.backdrop]}>
-  <div class="md:w-[min(100%,calc((100dvh-5rem)*3/2))] md:aspect-3/2 md:mx-auto grid md:grid-cols-2 perspective-[1800px]">
+<div data-dossier class:list={["min-h-dvh p-5 sm:p-10", styles.backdrop]}>
+  <div class="w-full lg:max-w-250 aspect-3/2 lg:mx-auto grid lg:grid-cols-2 perspective-[1800px]">
     <aside
       data-page
       class:list={[
-        "w-full p-5 md:aspect-3/4 origin-right transform-3d will-change-transform",
+        "p-5 origin-right transform-3d will-change-transform",
         styles.pageLeft,
       ]}
     >
@@ -49,14 +49,14 @@ const { skillSets } = Astro.props;
       </figure>
     </aside>
 
-    <div class:list={["w-full md:aspect-3/4 relative p-4 grid items-end", styles.pageRight]}>
+    <div class:list={["relative lg:p-4 grid items-end", styles.pageRight]}>
       <Image
         src={holder}
         alt=""
         format="svg"
-        class="hidden md:block absolute bottom-0 inset-x-0 w-full"
+        class="hidden lg:block absolute bottom-0 inset-x-0 w-full"
       />
-      <article class="grid gap-8 border border-ebony-200 bg-linear-to-l from-ebony-50 to-ebony-100 p-6 pb-20">
+      <article class="grid gap-8 border border-ebony-200 bg-linear-to-l from-ebony-50 to-ebony-100 p-6 lg:pb-20">
         <hgroup class="grid gap-1">
           <h2 class="font-light text-3xl text-ebony-800 underline">Specification Sheet</h2>
           <p class="font-light text-xs text-ebony-600">Click on a skill to see where I've used it</p>
@@ -66,7 +66,7 @@ const { skillSets } = Astro.props;
           {skillSets.map(({ skillSet, skills }) => (
             <>
               <h3 class="font-mono font-bold text-ebony-500 text-sm">{skillSet}</h3>
-              <div class="flex flex-wrap gap-x-3 gap-y-2">
+              <div class="flex flex-wrap items-start gap-x-3 gap-y-2">
                 {skills.map((skill) => <Pill {...skill} />)}
               </div>
             </>
