@@ -31,3 +31,14 @@
       color-mix(in srgb, var(--color-ebony-100) 20%, transparent) 0%,
       color-mix(in srgb, var(--color-ebony-600) 20%, transparent) 100%);
 }
+
+.pageLeft {
+  container-type: inline-size;
+}
+
+.figure {
+  /* 4rem = figure padding and borders, plus the height-limited case:
+     the aside is 3/4, so the image, gap and a two-line caption
+     only fit if the image is about 3.5rem narrower than the content box */
+  --img: min(20rem, calc(100cqw - 4rem));
+}

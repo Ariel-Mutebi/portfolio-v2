@@ -12,20 +12,33 @@ const { skillSets } = Astro.props;
 ---
 
 <div data-dossier class:list={["h-dvh p-10", styles.backdrop]}>
-  <div class="w-[min(100%,calc((100dvh-5rem)*3/2))] aspect-3/2 mx-auto grid sm:grid-cols-2 perspective-[1800px]">
+  <div class="md:w-[min(100%,calc((100dvh-5rem)*3/2))] md:aspect-3/2 md:mx-auto grid md:grid-cols-2 perspective-[1800px]">
     <aside
       data-page
-      class:list={["w-full p-5 aspect-3/4 origin-right transform-3d will-change-transform", styles.pageLeft]}
+      class:list={[
+        "w-full p-5 aspect-3/4 origin-right transform-3d will-change-transform",
+        styles.pageLeft,
+      ]}
     >
-      <figure class="grid p-4 gap-3 w-88 border border-ebony-200 bg-linear-to-l from-ebony-50 to-ebony-100">
-        <div class="relative w-80 aspect-3/4">
+      <figure
+        class:list={[
+          "grid grid-cols-(--img) p-4 gap-3 w-fit border border-ebony-200 bg-linear-to-l from-ebony-50 to-ebony-100",
+          styles.figure,
+        ]}
+      >
+        <div class="relative w-full aspect-3/4">
           <Image
             src={me}
             alt="Man wearing hard hat posing at a construction site"
             format="webp"
             class:list="w-full h-full object-cover"
           />
-          <div class:list={["absolute inset-0 pointer-events-none", styles.photoShade]}></div>
+          <div
+            class:list={[
+              "absolute inset-0 pointer-events-none",
+              styles.photoShade,
+            ]}
+          ></div>
         </div>
 
         <figcaption class="text-sm text-ebony-600">
