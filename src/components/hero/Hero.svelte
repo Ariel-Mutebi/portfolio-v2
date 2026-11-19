@@ -41,7 +41,10 @@
     let sceneDispose: (() => void) | undefined;
 
     createHeroScene({ canvas, ...sceneProps }).then((scene) => {
-      if (cancelled) { scene.dispose(); return; }
+      if (cancelled) {
+        return scene.dispose();
+      }
+
       sceneDispose = scene.dispose;
       isLoading = false;
 
@@ -53,7 +56,7 @@
           trigger: heroContainer,
           start: 'top top',
           end: 'bottom bottom',
-          scrub: 3,
+          scrub: 2,
         },
       });
 
@@ -108,7 +111,7 @@
   });
 </script>
 
-<header bind:this={heroContainer} class="relative h-[300vh] bg-ebony-100">
+<header bind:this={heroContainer} class="relative h-[300vh] bg-ebony-50">
   <div class="sticky top-0 h-dvh w-full overflow-hidden">
     
     <!-- Stage: everything inside here scales together -->
@@ -119,30 +122,28 @@
       <!-- Canvas (The Map) -->
       <canvas
         bind:this={canvas}
-        class="absolute inset-0 z-0 size-full transition-opacity duration-1000"
+        class="absolute inset-0 size-full transition-opacity duration-1000"
         class:opacity-0={isLoading}
         class:opacity-100={!isLoading}
       ></canvas>
 
-      <!-- Frame: -inset-[4%] creates the padding around the map -->
-      <div class="pointer-events-none absolute inset-[-6%] z-10">
+      <!-- Frame: negative inset creates the padding around the map -->
+      <div class="pointer-events-none absolute inset-[-7%] z-10">
         <MapFrame progress={frameProgress} />
       </div>
 
-      <!-- Caption: Pushed into the bottom 4% padding gap, inside the frame -->
+      <!-- Caption: Pushed into the bottom 5% padding gap, inside the frame -->
       <div class="absolute inset-x-0 bottom-[-5%] z-20 flex justify-center">
         <Caption text={caption} bind:el={captionEl} />
       </div>
 
       <!-- Card -->
-      <div class="relative z-30 grid h-full w-full grid-rows-2 items-start justify-center p-5">
-        <div
-          class="pointer-events-auto relative row-start-2 flex w-full justify-center transition-opacity duration-1000"
-          class:opacity-0={isLoading}
-          class:opacity-100={!isLoading}
-        >
-          <Card {name} {titles} />
-        </div>
+      <div
+        class="absolute bottom-10 p-10 inset-x-0 flex justify-center transition-opacity duration-1000"
+        class:opacity-0={isLoading}
+        class:opacity-100={!isLoading}
+      >
+        <Card {name} {titles} />
       </div>
     </div>
   </div>

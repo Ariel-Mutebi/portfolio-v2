@@ -8,8 +8,9 @@ import watermaskUrl from "../assets/terrain/watermask.bin?url";
 import normalmapUrl from "../assets/terrain/normalmap.bin?url";
 import shadowmapUrl from "../assets/terrain/shadowmap.bin?url";
 import noisemapUrl from "../assets/terrain/noise.bin?url";
+import Dossier from "../components/skills/Dossier.astro";
 
-const { hero } = page;
+const { hero, skillSets } = page;
 ---
 
 <!doctype html>
@@ -28,5 +29,6 @@ const { hero } = page;
 			{noisemapUrl}
 			client:load
 		/>
+		<Dossier {skillSets} />
 	</body>
 </html>

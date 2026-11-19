@@ -4,9 +4,9 @@
     "titles": "Full-stack web developer | TKS Innovator | Ex-Mapka",
     "caption": "The Rwenzoris and the Albertine Rift, western Uganda"
   },
-  "skill-sets": [
+  "skillSets": [
     {
-      "skill-set": "Frontend",
+      "skillSet": "Frontend",
       "skills": [
         {
           "name": "Svelte",
@@ -46,7 +46,7 @@
       ]
     },
     {
-      "skill-set": "Backend",
+      "skillSet": "Backend",
       "skills": [
         {
           "name": "Node",
@@ -111,7 +111,7 @@
       ]
     },
     {
-      "skill-set": "Infra",
+      "skillSet": "Infra",
       "skills": [
         {
           "name": "Docker",
@@ -146,7 +146,7 @@
       ]
     },
     {
-      "skill-set": "Machine Learning",
+      "skillSet": "Machine Learning",
       "skills": [
         {
           "name": "Python",

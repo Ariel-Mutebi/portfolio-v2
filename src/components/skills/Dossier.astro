@@ -1,0 +1,22 @@
+---
+import type { SkillSet } from "./types.ts";
+
+interface Props {
+  skillSets: SkillSet[];
+}
+
+const { skillSets } = Astro.props;
+---
+
+<div
+  class="h-dvh p-10
+    bg-[
+      linear-gradient(to_bottom,var(--color-ebony-50)_0%,transparent_45%),
+      radial-gradient(ellipse_at_100%_50%,white_0%,var(--color-ebony-50)_100%)
+    ]"
+>
+  <div class="w-[min(100%,calc((100dvh-5rem)*3/2))] aspect-3/2 mx-auto border grid grid-cols-2">
+    <aside class="w-full aspect-3/4 bg-[linear-gradient(to_left,rgb(255_233_167/80%)_0%,color-mix(in_srgb,var(--color-pollen-100)_80%,transparent)_15%,color-mix(in_srgb,var(--color-pollen-200)_80%,transparent)_100%)]"></aside>
+    <article class="w-full aspect-3/4 bg-[linear-gradient(to_left,color-mix(in_srgb,var(--color-pollen-100)_80%,transparent)_0%,color-mix(in_srgb,var(--color-pollen-200)_80%,transparent)_100%)]"></article>
+  </div>
+</div>
