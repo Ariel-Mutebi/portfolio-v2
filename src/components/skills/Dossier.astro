@@ -24,7 +24,8 @@ const { skillSets } = Astro.props;
     >
       <figure
         class:list={[
-          "grid grid-cols-(--img) p-4 gap-3 w-fit border border-ebony-200 bg-linear-to-l from-ebony-50 to-ebony-100",
+          "grid grid-cols-(--img) p-4 gap-3 w-fit border border-ebony-200",
+          "bg-linear-to-l from-ebony-50 to-ebony-100 hover:shadow",
           styles.figure,
         ]}
       >
@@ -54,20 +55,31 @@ const { skillSets } = Astro.props;
         src={holder}
         alt=""
         format="svg"
-        class="hidden lg:block absolute bottom-0 inset-x-0 w-full"
+        class="hidden lg:block absolute bottom-0 inset-x-0 w-full z-10"
       />
-      <article class="grid gap-8 border border-ebony-200 bg-linear-to-l from-ebony-50 to-ebony-100 p-6 lg:pb-20">
+      <article
+        class="flex flex-col gap-8 lg:aspect-3/4 hover:lg:-translate-y-2 border border-ebony-200
+          bg-linear-to-l from-ebony-50 to-ebony-100 p-6 lg:pb-20"
+      >
         <hgroup class="grid gap-1">
-          <h2 class="font-light text-3xl text-ebony-800 underline">Specification Sheet</h2>
-          <p class="font-light text-xs text-ebony-600">Click on a skill to see where I've used it</p>
+          <h2 class="font-light text-3xl text-ebony-800 underline">
+            Specification Sheet
+          </h2>
+          <p class="font-light text-xs text-ebony-600">
+            Click on a skill to see where I've used it.
+          </p>
         </hgroup>
 
         <section class="grid grid-cols-[1fr_4fr] gap-6">
           {skillSets.map(({ skillSet, skills }) => (
             <>
-              <h3 class="font-mono font-bold text-ebony-500 text-sm">{skillSet}</h3>
+              <h3 class="font-mono font-bold text-ebony-500 text-sm">
+                {skillSet}
+              </h3>
               <div class="flex flex-wrap items-start gap-x-3 gap-y-2">
-                {skills.map((skill) => <Pill {...skill} />)}
+                {skills.map((skill) => (
+                  <Pill {...skill} />
+                ))}
               </div>
             </>
           ))}
