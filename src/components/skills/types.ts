@@ -1,5 +1,9 @@
+import type { Color } from 'three';
+
 export interface LegoSceneConfig {
-  backgroundColor?: string;
+  backgroundColor?: Color;
+  gridColor?: Color;
+  gridCenterColor?: Color;
   modelPath?: string;
   modelScale?: number;
   cameraPosition?: {

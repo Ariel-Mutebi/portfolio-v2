@@ -7,59 +7,54 @@ import {
   DirectionalLight,
   Box3,
   Vector3,
-  SRGBColorSpace
+  SRGBColorSpace,
+  GridHelper,
 } from 'three';
 import type { Object3D, Material, BufferGeometry } from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { LDrawLoader } from 'three/addons/loaders/LDrawLoader.js';
 import { LDrawConditionalLineMaterial } from 'three/addons/materials/LDrawConditionalLineMaterial.js';
+import type { LegoSceneConfig, LegoSceneInstance } from './types.ts';
+import { threeColor } from '../../lib/colors.ts';
 
-import type {
-  LegoSceneConfig,
-  LegoSceneInstance
-} from './types';
-
-const DEFAULT_CONFIG: Required<LegoSceneConfig> = {
-  backgroundColor: '#e9e9e9',
-  modelPath: '/assets/3031.mpd',
-  modelScale: 1.2,
-  cameraPosition: {
-    x: 3,
-    y: 2,
-    z: 3
-  }
-};
+function getDefaultConfig(): Required<LegoSceneConfig> {
+  return {
+    backgroundColor: threeColor('--color-ebony-100'),
+    gridColor: threeColor('--color-ebony-300'),
+    gridCenterColor: threeColor('--color-ebony-400'),
+    modelPath: '/assets/3031.mpd',
+    modelScale: 1.2,
+    cameraPosition: {
+      x: 3,
+      y: 2,
+      z: 3
+    }
+  };
+}
 
 export function createLegoScene(
   container: HTMLElement,
   config: LegoSceneConfig = {}
 ): LegoSceneInstance {
   const settings = {
-    ...DEFAULT_CONFIG,
+    ...getDefaultConfig(),
     ...config
   };
 
   let destroyed = false;
   let animationFrameId: number | null = null;
 
-  // Scene
   const scene = createScene(settings);
-
-  // Camera
   const camera = createCamera(container, settings);
-
-  // Renderer
   const renderer = createRenderer(container);
+  const controls = createControls(renderer, camera);
 
-  // Lighting
   setupLighting(scene);
+  setupGroundGrid(scene, settings);
 
-  // Model loader
   const loader = createModelLoader();
-
-  // Attach renderer
   container.appendChild(renderer.domElement);
 
-  // Resize handling
   const handleResize = () => {
     const width = container.clientWidth;
     const height = container.clientHeight;
@@ -96,6 +91,8 @@ export function createLegoScene(
 
     animationFrameId = requestAnimationFrame(animate);
 
+    controls.update();
+
     renderer.render(scene, camera);
   }
 
@@ -116,27 +113,18 @@ export function createLegoScene(
 
       disposeScene(scene);
 
+      controls.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     }
   };
 }
 
-/* ----------------------------------
-   Scene setup
----------------------------------- */
-
 function createScene(config: Required<LegoSceneConfig>): Scene {
   const scene = new Scene();
-
-  scene.background = new Color(config.backgroundColor);
-
+  scene.background = config.backgroundColor;
   return scene;
 }
-
-/* ----------------------------------
-   Camera setup
----------------------------------- */
 
 function createCamera(
   container: HTMLElement,
@@ -157,10 +145,6 @@ function createCamera(
   return camera;
 }
 
-/* ----------------------------------
-   Renderer setup
----------------------------------- */
-
 function createRenderer(container: HTMLElement): WebGLRenderer {
   const renderer = new WebGLRenderer({
     antialias: true
@@ -180,9 +164,25 @@ function createRenderer(container: HTMLElement): WebGLRenderer {
   return renderer;
 }
 
-/* ----------------------------------
-   Lighting setup
----------------------------------- */
+function createControls(renderer: WebGLRenderer, camera: PerspectiveCamera) {
+  const controls = new OrbitControls(camera, renderer.domElement);
+
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.05;
+
+  // Restrict vertical rotation
+  controls.minPolarAngle = Math.PI / 6;
+  controls.maxPolarAngle = Math.PI / 2.1;
+
+  // Disable zoom (scroll to zoom was trapping user)
+  controls.enableZoom = false;
+
+  // Keep the camera focused on the model
+  controls.target.set(0, 0, 0);
+
+  controls.update();
+  return controls;
+}
 
 function setupLighting(scene: Scene): void {
   const ambientLight = new HemisphereLight(
@@ -203,9 +203,18 @@ function setupLighting(scene: Scene): void {
   scene.add(directionalLight);
 }
 
-/* ----------------------------------
-   Model loading
----------------------------------- */
+function setupGroundGrid(scene: Scene, config: Required<LegoSceneConfig>): void {
+  const grid = new GridHelper(10, 40, config.gridCenterColor, config.gridColor);
+
+  grid.position.y = -0.65;
+
+  const material = grid.material as Material;
+
+  material.transparent = true;
+  material.opacity = 0.35;
+
+  scene.add(grid);
+}
 
 function createModelLoader(): LDrawLoader {
   const loader = new LDrawLoader();
@@ -225,10 +234,6 @@ async function loadModel(
 
   return model;
 }
-
-/* ----------------------------------
-   Model transformations
----------------------------------- */
 
 function centerAndScaleModel(
   model: Object3D,
@@ -253,10 +258,6 @@ function centerAndScaleModel(
     -center.z * scale
   );
 }
-
-/* ----------------------------------
-   Resource disposal
----------------------------------- */
 
 function disposeObject(object: Object3D): void {
   object.traverse((child) => {
