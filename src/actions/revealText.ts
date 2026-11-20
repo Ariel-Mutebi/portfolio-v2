@@ -1,4 +1,3 @@
-// src/lib/actions/revealText.ts
 import gsap from 'gsap';
 
 export interface RevealTextOptions {
@@ -12,18 +11,12 @@ export interface RevealTextOptions {
   trigger?: 'mount' | 'enter';
   /** IntersectionObserver threshold (0–1) for `trigger: 'enter'`. */
   threshold?: number;
-  /** Subtle looping opacity "breathing" after the reveal. */
-  breathe?: boolean;
-  breatheOpacity?: number;
-  breatheDuration?: number;
-  breatheStagger?: number;
 }
 
 export function revealText(node: HTMLElement, options: RevealTextOptions = {}) {
   let opts = resolve(options);
   let targets: HTMLElement[] = [];
   let tl: gsap.core.Timeline | null = null;
-  let breathe: gsap.core.Tween | null = null;
   let observer: IntersectionObserver | null = null;
 
   function resolve(o: RevealTextOptions) {
@@ -34,11 +27,7 @@ export function revealText(node: HTMLElement, options: RevealTextOptions = {}) {
       stagger: o.stagger ?? 0.15,
       delay: o.delay ?? 0,
       trigger: o.trigger ?? 'mount',
-      threshold: o.threshold ?? 0.15,
-      breathe: o.breathe ?? true,
-      breatheOpacity: o.breatheOpacity ?? 0.85,
-      breatheDuration: o.breatheDuration ?? 2.5,
-      breatheStagger: o.breatheStagger ?? 0.3
+      threshold: o.threshold ?? 0.15
     };
   }
 
@@ -48,7 +37,7 @@ export function revealText(node: HTMLElement, options: RevealTextOptions = {}) {
     if (!targets.length) return;
 
     // Hide below the mask before the first paint to avoid a flash.
-    gsap.set(targets, { yPercent: 110, opacity: 1 });
+    gsap.set(targets, { yPercent: 110 });
 
     if (opts.trigger === 'enter') {
       observer = new IntersectionObserver(
@@ -72,25 +61,11 @@ export function revealText(node: HTMLElement, options: RevealTextOptions = {}) {
       defaults: { duration: opts.duration, ease: opts.ease }
     });
     tl.to(targets, { yPercent: 0, stagger: opts.stagger });
-
-    if (opts.breathe) {
-      breathe = gsap.to(targets, {
-        opacity: opts.breatheOpacity,
-        duration: opts.breatheDuration,
-        ease: 'sine.inOut',
-        repeat: -1,
-        yoyo: true,
-        delay: opts.delay,
-        stagger: { each: opts.breatheStagger, from: 'start' }
-      });
-    }
   }
 
   function cleanup() {
     tl?.kill();
     tl = null;
-    breathe?.kill();
-    breathe = null;
     observer?.disconnect();
     observer = null;
   }
@@ -112,7 +87,7 @@ export function revealText(node: HTMLElement, options: RevealTextOptions = {}) {
     /** Replay the reveal (useful for route changes, hover triggers, etc.). */
     replay() {
       cleanup();
-      gsap.set(targets, { yPercent: 110, opacity: 1 });
+      gsap.set(targets, { yPercent: 110 });
       play();
     },
     destroy() {

@@ -3,6 +3,7 @@
   import gsap from 'gsap';
   import { magneticText } from '../../actions/magneticText.ts';
   import { revealText } from '../../actions/revealText.ts';
+  import { breathe } from '../../actions/breathe.ts';
 
   interface Props {
     name: string;
@@ -50,6 +51,7 @@
   bind:this={card}
   use:revealText
   use:magneticText
+  use:breathe={{ selector: '.reveal-text' }}
   class="grid p-5 gap-5 pb-8 max-w-2xl border border-ebony-400 rounded-xl bg-linear-to-br
     from-ebony-50 via-ebony-100 to-ebony-200 bg-size-[200%_200%] animate-ambient will-change-transform"
 >

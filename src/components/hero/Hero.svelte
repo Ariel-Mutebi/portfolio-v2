@@ -75,7 +75,7 @@
       tl.to(captionEl, {
         scrambleText: {
           text: caption,
-          chars: 'upperCase',
+          chars: '01',
           speed: 0.4,
           revealDelay: 0.05,
         },
