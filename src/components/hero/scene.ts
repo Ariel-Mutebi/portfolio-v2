@@ -12,7 +12,6 @@ import {
   ShaderMaterial,
   Vector2,
   WebGLRenderer,
-  Color,
   UnsignedByteType,
   DoubleSide,
   MathUtils,
@@ -21,6 +20,7 @@ import {
 import type { TerrainMetadata } from './types.ts';
 import vertexShader from './shaders/fullscreen.vert?raw';
 import fragmentShader from './shaders/terrain.frag?raw';
+import { threeColor } from '../../lib/colors.ts';
 
 const halfFloatLookup = Uint16Array.from({ length: 65536 }, (_, stored) =>
   DataUtils.toHalfFloat(stored / 65535),
@@ -82,12 +82,6 @@ async function loadNoiseTexture(url: string) {
   return texture;
 }
 
-const readCssColor = (element: HTMLElement, name: string) => {
-  const value = getComputedStyle(element).getPropertyValue(name).trim();
-  if (!value) throw new Error(`CSS variable ${name} is not defined`);
-  return new Color(value);
-};
-
 interface SceneOptions {
   canvas: HTMLCanvasElement;
   terrain: TerrainMetadata;
@@ -100,7 +94,6 @@ interface SceneOptions {
 
 export async function createHeroScene(options: SceneOptions) {
   const { canvas, terrain, heightmapUrl, watermaskUrl, normalmapUrl, shadowmapUrl, noisemapUrl } = options;
-  const color = (name: string) => readCssColor(canvas, name);
 
   const [heightTexture, waterTexture, normalTexture, shadowTexture, noiseTexture] = await Promise.all([
     loadHeightTexture(heightmapUrl, terrain.width, terrain.height),
@@ -120,23 +113,23 @@ export async function createHeroScene(options: SceneOptions) {
     uNoise: { value: noiseTexture },
     uMinElevation: { value: terrain.minElevation },
     uMaxElevation: { value: terrain.maxElevation },
-    uFieldColor: { value: color('--color-pollen-50') },
-    uMinorColor: { value: color('--color-ebony-600') },
-    uIndexColor: { value: color('--color-ebony-950') },
-    uWaterMapColor: { value: color('--color-steel-400') },
+    uFieldColor: { value: threeColor('--color-pollen-50') },
+    uMinorColor: { value: threeColor('--color-ebony-600') },
+    uIndexColor: { value: threeColor('--color-ebony-950') },
+    uWaterMapColor: { value: threeColor('--color-steel-400') },
     uTexel: { value: new Vector2(1 / terrain.width, 1 / terrain.height) },
     uMetersPerPixel: { value: terrain.metersPerPixel },
     uExaggeration: { value: 2.0 },
     uReal: { value: 1.0 },
     uWater: { value: waterTexture },
-    uWaterColor: { value: color('--color-steel-950') },
-    uLowColor: { value: color('--color-viridian-800') },
-    uMidColor: { value: color('--color-viridian-500') },
-    uRockColor: { value: color('--color-ebony-400') },
-    uSnowColor: { value: color('--color-ebony-50') },
-    uSunColor: { value: color('--color-pollen-100').multiplyScalar(0.9) },
-    uAmbientColor: { value: color('--color-steel-700').multiplyScalar(0.4) },
-    uSkyColor: { value: color('--color-steel-100') },
+    uWaterColor: { value: threeColor('--color-steel-950') },
+    uLowColor: { value: threeColor('--color-viridian-800') },
+    uMidColor: { value: threeColor('--color-viridian-500') },
+    uRockColor: { value: threeColor('--color-ebony-400') },
+    uSnowColor: { value: threeColor('--color-ebony-50') },
+    uSunColor: { value: threeColor('--color-pollen-100').multiplyScalar(0.9) },
+    uAmbientColor: { value: threeColor('--color-steel-700').multiplyScalar(0.4) },
+    uSkyColor: { value: threeColor('--color-steel-100') },
   };
 
   const planeWidth = 6;

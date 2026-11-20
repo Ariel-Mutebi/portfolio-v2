@@ -5,6 +5,7 @@
   import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
   import { magneticText } from '../../actions/magneticText.ts';
   import { breathe } from '../../actions/breathe.ts';
+  import Background from './Background.svelte';
 
   gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
 
@@ -61,7 +62,8 @@
   });
 </script>
 
-<section class="min-h-dvh p-10 pl-20">
+<section class="min-h-dvh pl-4 pr-8 py-[20dvh] sm:pl-20 lg:pr-40 relative">
+  <Background />
   <div
     bind:this={textEl}
     use:magneticText={{
@@ -72,7 +74,7 @@
       enabled: done
     }}
     use:breathe={{ enabled: done, minOpacity: 0.85 }}
-    class="grid max-w-260 font-mono text-6xl font-extrabold leading-relaxed text-viridian-950"
+    class="relative z-10 grid font-mono text-[max(2rem,4.5dvw)] font-extrabold leading-relaxed text-viridian-950"
   >
     <!-- Layer 1: owned by ScrambleText only -->
     <span
