@@ -9,11 +9,11 @@ import {
   SHADOWMAP_PATH,
   META_PATH,
   NOISE_TEXTURE_PATH,
-} from './terrain/config.ts';
-import { metersPerPixelAt } from './terrain/geo.ts';
-import { computeFrame, loadElevations } from './terrain/tiles.ts';
-import { findExtent, locateHighestPoint, detectWater, waterShareOf, quantize, toWatermask } from './terrain/analysis.ts';
-import { computeNormalMap, computeShadowMap, buildMetadata, writeOutputs, computeNoiseTexture } from './terrain/bake.ts';
+} from './config.ts';
+import { metersPerPixelAt } from './geo.ts';
+import { computeFrame, loadElevations } from './tiles.ts';
+import { findExtent, locateHighestPoint, detectWater, waterShareOf, quantize, toWatermask } from './analysis.ts';
+import { computeNormalMap, computeShadowMap, buildMetadata, writeOutputs, computeNoiseTexture } from './bake.ts';
 
 const exists = (path: string): Promise<boolean> =>
   access(path).then(() => true, () => false);

@@ -9,7 +9,7 @@ import normalmapUrl from "../assets/terrain/normalmap.bin?url";
 import shadowmapUrl from "../assets/terrain/shadowmap.bin?url";
 import noisemapUrl from "../assets/terrain/noise.bin?url";
 import Statement from "../components/statement/Statement.svelte";
-import Dossier from "../components/skills/Dossier.astro";
+import LegoScene from "../components/skills/LegoScene.svelte";
 
 const { hero, statement, skillSets } = page;
 ---
@@ -31,6 +31,6 @@ const { hero, statement, skillSets } = page;
 			client:load
 		/>
 		<Statement {statement} client:visible />
-		<!-- <Dossier {skillSets} /> -->
+		<LegoScene client:visible />
 	</body>
 </html>
