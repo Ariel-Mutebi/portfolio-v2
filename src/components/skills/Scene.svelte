@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { createLegoScene } from './legoScene.ts';
+  import { createLegoScene } from './scene/index.ts';
 
   let container: HTMLDivElement;
 
