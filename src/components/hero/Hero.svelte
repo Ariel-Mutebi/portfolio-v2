@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
   import { createHeroScene } from './scene.ts';
   import type { TerrainMetadata } from './types.ts';
 
@@ -10,7 +9,7 @@
   import Caption from './Caption.svelte';
   import MapFrame from './MapFrame.svelte';
 
-  gsap.registerPlugin(ScrollTrigger, ScrambleTextPlugin);
+  gsap.registerPlugin(ScrollTrigger);
 
   interface Props {
     name: string;
@@ -71,17 +70,12 @@
       // ── 2 · background + card shrink #1 (200 → 210vh)
       tl.to(stageEl, { scale: 0.90, duration: 10, ease: 'none' }, 200);
 
-      // ── 3 · caption scrambles in (220 → 240vh)
-      tl.to(captionEl, {
-        scrambleText: {
-          text: caption,
-          chars: '01',
-          speed: 0.4,
-          revealDelay: 0.05,
-        },
-        duration: 20,
-        ease: 'none',
-      }, 220);
+      // ── 3 · caption fades in (220 → 240vh)
+      tl.fromTo(captionEl,
+        { opacity: 0 },
+        { opacity: 1, duration: 20, ease: 'none' },
+        220
+      );
 
       // ── 4 · background + card shrink #2 (230 → 250vh)
       tl.to(stageEl, { scale: 0.80, duration: 20, ease: 'none' }, 230);
