@@ -56,3 +56,113 @@ GSAP `ScrollTrigger` pins a sticky viewport over a `200vh` scroll track and driv
 - All heavy work (normals, shadows, noise) is baked at build time — the shader only does ~5 texture lookups per pixel.
 - Map contours use a mip-biased lookup instead of a 5-tap blur.
 - Redraws are throttled via `requestAnimationFrame`.
+
+# LEGO Brick Asset Pipeline
+
+A lightweight build-time pipeline that resolves, downloads, and packs individual LDraw LEGO parts into self-contained MPD files for rendering with Three.js.
+
+Instead of shipping the entire 140 MB LDraw library or loading individual part dependencies at runtime, each LEGO brick is packaged into a single asset.
+
+## How it works
+
+### 1. Build pipeline (`scripts/ldraw/index.ts`)
+
+Run `pnpm run pack:brick` to generate a packed LEGO model.
+
+The pipeline is split into focused modules under `scripts/ldraw/`:
+
+- **`config.ts`** — brick filename, LDraw mirror, temporary directory, output directory, and pinned Three.js release (`r187`).
+- **`client.ts`** — downloads individual LDraw files from the LDraw mirror, resolves file locations (`parts/`, `p/`, `models/`), and preserves special filenames such as `LDConfig.ldr`.
+- **`resolver.ts`** — parses LDraw type-1 references, recursively discovers dependencies, downloads required subparts and primitives, and prevents duplicate downloads and circular references.
+- **`packer.ts`** — downloads and executes Three.js's official `packLDrawModel.mjs` utility, then copies the resulting MPD into the public assets directory.
+- **`pipeline.ts`** — orchestrates the build: downloads colour definitions, retrieves the root brick, resolves dependencies, and invokes the packer.
+- **`index.ts`** — entry point that initializes configuration, runs the pipeline, and cleans up the temporary directory.
+
+### 2. Dependency resolution
+
+The pipeline starts with a single LDraw part (e.g. `3031.dat`) and recursively resolves its dependencies.
+
+For example:
+
+```text
+3031.dat
+├── stud.dat
+├── stud4.dat
+└── box5.dat
+```
+
+Dependencies are discovered by parsing LDraw type-1 lines, which reference other parts or primitives.
+
+- Files are downloaded only when needed.
+- Already visited dependencies are skipped.
+- Independent dependencies are downloaded concurrently.
+- `LDConfig.ldr` is downloaded separately for LDraw colour definitions.
+
+No complete LDraw library installation is required.
+
+### 3. Packing (`packer.ts`)
+
+Once all dependencies are available locally, the pipeline delegates packaging to Three.js's official `packLDrawModel.mjs` utility.
+
+The packer combines the root model and its dependencies into a single MPD file.
+
+The generated asset is copied to:
+
+```text
+public/assets/3031.mpd
+```
+
+The Three.js packing utility is pinned to release `r187` to match the project's installed Three.js version.
+
+### 4. Scene integration
+
+The resulting MPD is loaded directly using Three.js's `LDrawLoader`:
+
+```ts
+const loader = new LDrawLoader();
+
+loader.setConditionalLineMaterial(
+  LDrawConditionalLineMaterial
+);
+
+const brick = await loader.loadAsync(
+  '/assets/3031.mpd'
+);
+
+scene.add(brick);
+```
+
+Because the model is self-contained, the browser doesn't need to fetch individual LDraw dependencies.
+
+The usual Three.js scene setup handles camera positioning, lighting, scaling, and rendering.
+
+## Adding another brick
+
+To generate a different LEGO part, change the brick filename passed to `createConfig()` in `scripts/ldraw/index.ts`:
+
+```ts
+const config = await createConfig('3001.dat');
+```
+
+Then run:
+
+```bash
+pnpm run pack:brick
+```
+
+The resulting model will be available at:
+
+```text
+public/assets/3001.mpd
+```
+
+Each brick is packaged independently, so only the dependencies required by that particular model are downloaded.
+
+## Performance notes
+
+- No full LDraw library is shipped with the application.
+- Dependency resolution and model packing happen at build time, not in the browser.
+- Each brick is delivered as a single self-contained MPD asset.
+- No runtime requests for individual `.dat` dependencies.
+- Temporary downloaded files are removed after packing.
+- The Three.js packer is pinned to `r187` for version consistency.
