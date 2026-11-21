@@ -3,6 +3,7 @@
   import { gsap } from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { createLegoScene } from './scene/index.ts';
+  import Windows from './Windows.svelte';
 
   interface Props {
     modelUrl: string;
@@ -12,18 +13,23 @@
 
   let section: HTMLElement;
   let container: HTMLDivElement;
+  let windows: Windows;
 
   onMount(() => {
     gsap.registerPlugin(ScrollTrigger);
 
     const scene = createLegoScene(modelUrl, container);
     scene.setProgress(0);
+    windows.setProgress(0);
 
     const trigger = ScrollTrigger.create({
       trigger: section,
       start: 'top top',
       end: 'bottom bottom',
-      onUpdate: (self) => scene.setProgress(self.progress),
+      onUpdate: (self) => {
+        scene.setProgress(self.progress);
+        windows.setProgress(self.progress);
+      },
     });
 
     return () => {
@@ -35,10 +41,10 @@
 
 <section bind:this={section} class="relative h-[300vh]">
   <div class="sticky top-0 h-dvh overflow-hidden">
-    <!-- Background: the Lego scene -->
     <div class="absolute inset-0 z-0" bind:this={container}></div>
 
-    <!-- Foreground: windows go here -->
-    <div class="absolute inset-0 z-10 pointer-events-none"></div>
+    <div class="absolute inset-0 z-10 pointer-events-none">
+      <Windows bind:this={windows} />
+    </div>
   </div>
 </section>
