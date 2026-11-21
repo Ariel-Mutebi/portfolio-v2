@@ -13,6 +13,7 @@ export function getDefaultConfig(): Required<LegoSceneConfig> {
       x: 3,
       y: 2,
       z: 3
-    }
+    },
+    viewOffsetX: 0.2
   };
 }

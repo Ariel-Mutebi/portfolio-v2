@@ -12,6 +12,7 @@ export interface LegoSceneConfig {
     y: number;
     z: number;
   };
+  viewOffsetX?: number;
 }
 
 export interface LegoSceneInstance {

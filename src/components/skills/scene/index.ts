@@ -2,7 +2,7 @@ import { Box3 } from 'three';
 import type { LegoSceneConfig, LegoSceneInstance } from './types.ts';
 import { getDefaultConfig } from './config.ts';
 import { createScene } from './scene.ts';
-import { createCamera } from './camera.ts';
+import { createCamera, applyViewOffset } from './camera.ts';
 import { createRenderer } from './renderer.ts';
 import { createControls } from './controls.ts';
 import { setupLighting } from './lighting.ts';
@@ -49,7 +49,7 @@ export function createLegoScene(
     if (!width || !height) return;
 
     camera.aspect = width / height;
-    camera.updateProjectionMatrix();
+    applyViewOffset(camera, width, height, settings.viewOffsetX);
 
     renderer.setSize(width, height);
   };
