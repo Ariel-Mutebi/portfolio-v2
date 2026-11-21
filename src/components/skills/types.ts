@@ -13,7 +13,5 @@ export interface File {
 
 export interface WindowState extends File {
   id: number;
-  top: number;
-  left: number;
   closed: boolean;
 }

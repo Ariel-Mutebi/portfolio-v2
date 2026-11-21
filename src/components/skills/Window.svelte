@@ -39,20 +39,16 @@
   });
 </script>
 
-<!-- Outer: positioned and revealed by scroll -->
 <div
   bind:this={root}
-  class={['pointer-events-auto absolute', {
+  class={['window-root pointer-events-auto absolute', {
     hidden: state.closed,
     invisible: state.id !== 0,
   }]}
-  style:top="{state.top}px"
-  style:left="{state.left}px"
+  style:--index={state.id}
 >
-  <!-- Inner: moved by Draggable -->
-  <article bind:this={win} class="bg-ebony-50 w-150 border-4 border-ebony-200 rounded-lg font-mono">
-    <header bind:this={handle} class="flex cursor-grab items-center justify-between py-2 px-3 border-b border-b-ebony-200">
-      <hgroup class="flex items-center gap-1">
+  <article bind:this={win} class="window bg-ebony-50 border-4 border-ebony-200 rounded-lg font-mono">
+    <header bind:this={handle} class="handle flex items-center justify-between py-2 px-3 border-b border-b-ebony-200">      <hgroup class="flex items-center gap-1">
         <img src={fileIcon.src} alt="file icon">
         <h4 class="text-sm text-ebony-500 font-bold">{state.filename}</h4>
       </hgroup>
@@ -73,3 +69,38 @@
     </div>
   </article>
 </div>
+
+<style>
+  .window-root {
+    /* mobile defaults */
+    --start-top: 1rem;
+    --start-left: 0.75rem;
+    --step: 2.5rem;
+    --width: clamp(18rem, 90%, 37.5rem);
+
+    --wanted-left: calc(var(--start-left) + var(--index) * var(--step));
+
+    top: calc(var(--start-top) + var(--index) * var(--step));
+    left: clamp(0px, var(--wanted-left), 100% - var(--width));
+  }
+
+  .window {
+    width: var(--width);
+  }
+
+  .handle {
+    cursor: default;
+  }
+
+  @media (min-width: 48rem) {
+    .window-root {
+      --start-top: 2.5rem;
+      --start-left: 32rem;
+      --step: 3rem;
+    }
+
+    .handle {
+      cursor: grab;
+    }
+  }
+</style>
