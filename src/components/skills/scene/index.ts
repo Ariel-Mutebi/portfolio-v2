@@ -1,15 +1,12 @@
+import { Box3 } from 'three';
 import type { LegoSceneConfig, LegoSceneInstance } from './types.ts';
-
 import { getDefaultConfig } from './config.ts';
-
 import { createScene } from './scene.ts';
 import { createCamera } from './camera.ts';
 import { createRenderer } from './renderer.ts';
 import { createControls } from './controls.ts';
-
 import { setupLighting } from './lighting.ts';
 import { setupGroundGrid } from './grid.ts';
-
 import { loadModel } from './model.ts';
 import { createStack, applyProgress } from './stack.ts';
 import type { PlateStack } from './stack.ts';
@@ -38,7 +35,8 @@ export function createLegoScene(
 
   // Setup scene
   setupLighting(scene);
-  setupGroundGrid(scene, settings);
+  const grid = setupGroundGrid(scene, settings);
+  grid.visible = false;
 
   container.appendChild(renderer.domElement);
 
@@ -70,6 +68,11 @@ export function createLegoScene(
       for (const plate of stack.plates) {
         scene.add(plate);
       }
+
+      // Rest the grid on the bottom of the base plate
+      const baseBottom = new Box3().setFromObject(stack.plates[0]).min.y;
+      grid.position.y = baseBottom - 0.001;
+      grid.visible = true;
 
       // Progress may have been set before the model finished loading
       applyProgress(stack, progress);

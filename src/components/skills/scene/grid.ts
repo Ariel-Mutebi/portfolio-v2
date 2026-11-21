@@ -4,7 +4,7 @@ import type { LegoSceneConfig } from './types.ts';
 export function setupGroundGrid(
   scene: Scene,
   config: Required<LegoSceneConfig>
-): void {
+): GridHelper {
   const grid = new GridHelper(
     10,
     40,
@@ -12,12 +12,12 @@ export function setupGroundGrid(
     config.gridColor
   );
 
-  grid.position.y = -0.65;
-
   const material = grid.material;
 
   material.transparent = true;
   material.opacity = 0.35;
 
   scene.add(grid);
+
+  return grid;
 }
