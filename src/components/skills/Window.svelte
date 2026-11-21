@@ -53,7 +53,12 @@
         <img src={fileIcon.src} alt="file icon">
         <h4 class="text-sm text-ebony-500 font-bold">{state.filename}</h4>
       </hgroup>
-      <button type="button" onclick={onclose} title="close" class="p-1 bg-ebony-200 text-ebony-900">
+      <button
+        type="button"
+        title="close"
+        onclick={onclose}
+        class="p-1 bg-ebony-200 text-ebony-900 hover:bg-chilli-200 active:bg-chilli-300"
+      >
         <img src={closeIcon.src} alt="close icon" />
       </button>
     </header>

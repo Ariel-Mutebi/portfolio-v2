@@ -56,6 +56,18 @@
   --color-pollen-900: #7A2F0D;
   --color-pollen-950: #461602;
 
+  --color-chilli-50: #FEF4F2;
+  --color-chilli-100: #FDE7E3;
+  --color-chilli-200: #FCD2CC;
+  --color-chilli-300: #F9B3A8;
+  --color-chilli-400: #F38776;
+  --color-chilli-500: #E8604B;
+  --color-chilli-600: #D64933;
+  --color-chilli-700: #B33622;
+  --color-chilli-800: #943020;
+  --color-chilli-900: #7B2D21;
+  --color-chilli-950: #43130C;
+
   --animate-ambient: ambient 12s ease-in-out infinite alternate;
   
   @keyframes ambient {

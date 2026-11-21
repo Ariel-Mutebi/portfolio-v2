@@ -44,7 +44,9 @@
 {#if closedCount > 0}
   <button
     type="button"
-    class="pointer-events-auto absolute top-4 right-4 bg-white px-3 py-1 text-black"
+    class="pointer-events-auto absolute top-4 right-4 px-3 py-1 font-mono
+      bg-viridian-200 text-viridian-950 border border-viridian-400
+      hover:bg-viridian-300 active:text-viridian-200 active:bg-viridian-950"
     onclick={() => windows.forEach((w) => (w.closed = false))}
   >
     Restore ({closedCount})
