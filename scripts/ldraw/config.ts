@@ -16,7 +16,7 @@ export const createConfig = async (
     path.join(os.tmpdir(), 'ldraw-pack-')
   ),
 
-  outputDir: path.resolve('public/assets'),
+  outputDir: path.resolve('src/assets'),
 
   threeRelease: THREE_RELEASE
 });

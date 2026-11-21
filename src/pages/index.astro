@@ -9,7 +9,8 @@ import normalmapUrl from "../assets/terrain/normalmap.bin?url";
 import shadowmapUrl from "../assets/terrain/shadowmap.bin?url";
 import noisemapUrl from "../assets/terrain/noise.bin?url";
 import Statement from "../components/statement/Statement.svelte";
-import Scene from "../components/skills/Scene.svelte";
+import Skills from "../components/skills/Skills.svelte";
+import modelUrl from "../assets/3031.mpd?url";
 
 const { hero, statement, skillSets } = page;
 ---
@@ -31,6 +32,6 @@ const { hero, statement, skillSets } = page;
 			client:load
 		/>
 		<Statement {statement} client:visible />
-		<Scene client:visible />
+		<Skills {modelUrl} client:visible />
 	</body>
 </html>

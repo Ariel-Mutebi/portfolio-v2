@@ -13,6 +13,7 @@ import type { PlateStack } from './stack.ts';
 import { disposeObject } from './disposal.ts';
 
 export function createLegoScene(
+  modelUrl: string,
   container: HTMLElement,
   config: LegoSceneConfig = {}
 ): LegoSceneInstance {
@@ -56,7 +57,7 @@ export function createLegoScene(
   window.addEventListener('resize', handleResize);
 
   // Load LEGO model and build the stack
-  loadModel(settings)
+  loadModel(modelUrl, settings)
     .then((model) => {
       if (destroyed) {
         disposeObject(model);

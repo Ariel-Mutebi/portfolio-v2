@@ -2,10 +2,16 @@
   import { onMount } from 'svelte';
   import { createLegoScene } from './scene/index.ts';
 
+  interface Props {
+    modelUrl: string;
+  }
+
+  const { modelUrl }: Props = $props();
+
   let container: HTMLDivElement;
 
   onMount(() => {
-    const scene = createLegoScene(container);
+    const scene = createLegoScene(modelUrl, container);
     scene.setProgress(1);
 
     return () => {

@@ -42,11 +42,10 @@ function centerAndScaleModel(
   );
 }
 
-export async function loadModel(config: Required<LegoSceneConfig>): Promise<Object3D> {
+export async function loadModel(modelUrl: string, config: Required<LegoSceneConfig>): Promise<Object3D> {
   const loader = createModelLoader();
 
-  const model = await loader.loadAsync(config.modelPath);
-
+  const model = await loader.loadAsync(modelUrl);
   centerAndScaleModel(model, config.modelScale);
 
   return model;

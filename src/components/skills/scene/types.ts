@@ -4,7 +4,6 @@ export interface LegoSceneConfig {
   backgroundColor?: Color;
   gridColor?: Color;
   gridCenterColor?: Color;
-  modelPath?: string;
   modelScale?: number;
   plateCount?: number;
   dropHeight?: number;
