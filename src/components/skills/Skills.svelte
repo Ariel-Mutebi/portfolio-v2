@@ -4,9 +4,11 @@
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
   import { createLegoScene } from './scene/index.ts';
   import Windows from './Windows.svelte';
+  import type { File } from './types.ts';
 
   interface Props {
     modelUrl: string;
+    files: File[];
   }
 
   const { modelUrl }: Props = $props();

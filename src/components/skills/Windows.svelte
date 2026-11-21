@@ -10,7 +10,6 @@
   ]);
 
   let refs: ReturnType<typeof Window>[] = [];
-
   const closedCount = $derived(windows.filter((w) => w.closed).length);
 
   export function setProgress(p: number) {

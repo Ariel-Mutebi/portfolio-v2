@@ -12,7 +12,7 @@ import Statement from "../components/statement/Statement.svelte";
 import Skills from "../components/skills/Skills.svelte";
 import modelUrl from "../assets/3031.mpd?url";
 
-const { hero, statement, skillSets } = page;
+const { hero, statement, files } = page;
 ---
 
 <!doctype html>
@@ -32,6 +32,6 @@ const { hero, statement, skillSets } = page;
 			client:load
 		/>
 		<Statement {statement} client:visible />
-		<Skills {modelUrl} client:visible />
+		<Skills {files} {modelUrl} client:visible />
 	</body>
 </html>
