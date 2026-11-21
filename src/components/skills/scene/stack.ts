@@ -49,7 +49,9 @@ export function applyProgress(stack: PlateStack, progress: number): void {
     // 0 before this plate's slice of progress, 1 after it, linear in between
     const t = Math.min(Math.max(progress * falling - (i - 1), 0), 1);
 
+    // ease-out cubic: fast start, gentle settle
+    const eased = 1 - (1 - t) ** 3;
     plates[i].visible = t > 0;
-    plates[i].position.y = restY[i] + (1 - t) * dropHeight;
+    plates[i].position.y = restY[i] + (1 - eased) * dropHeight;
   }
 }
