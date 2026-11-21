@@ -42,7 +42,10 @@
 <!-- Outer: positioned and revealed by scroll -->
 <div
   bind:this={root}
-  class={['pointer-events-auto absolute', { hidden: state.closed }]}
+  class={['pointer-events-auto absolute', {
+    hidden: state.closed,
+    invisible: state.id !== 0,
+  }]}
   style:top="{state.top}px"
   style:left="{state.left}px"
 >
@@ -59,7 +62,7 @@
         onclick={onclose}
         class="p-1 bg-ebony-200 text-ebony-900 hover:bg-chilli-200 active:bg-chilli-300"
       >
-        <img src={closeIcon.src} alt="close icon" />
+        <img src={closeIcon.src} alt="" />
       </button>
     </header>
     <div class="p-4 pb-8">

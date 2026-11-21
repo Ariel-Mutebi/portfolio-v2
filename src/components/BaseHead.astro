@@ -46,3 +46,20 @@ const { title, description, image } = Astro.props;
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
+
+<!-- Lenis integration with GSAP for smoothened scrolling -->
+<script>
+	import Lenis from "lenis";
+	import "lenis/dist/lenis.css";
+	import { gsap } from "gsap";
+	import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+	gsap.registerPlugin(ScrollTrigger);
+
+	// lower = heavier, slower catch-up
+	const lenis = new Lenis({ lerp: 0.005 });
+
+	lenis.on("scroll", ScrollTrigger.update);
+	gsap.ticker.add((time) => lenis.raf(time * 1000));
+	gsap.ticker.lagSmoothing(0);
+</script>
