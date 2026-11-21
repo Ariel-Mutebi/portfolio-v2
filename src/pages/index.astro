@@ -10,7 +10,7 @@ import shadowmapUrl from "../assets/terrain/shadowmap.bin?url";
 import noisemapUrl from "../assets/terrain/noise.bin?url";
 import Statement from "../components/statement/Statement.svelte";
 import Skills from "../components/skills/Skills.svelte";
-import modelUrl from "../assets/3031.mpd?url";
+import legoUrl from "../assets/3031.mpd?url";
 
 const { hero, statement, files } = page;
 ---
@@ -32,6 +32,6 @@ const { hero, statement, files } = page;
 			client:load
 		/>
 		<Statement {statement} client:visible />
-		<Skills {files} {modelUrl} client:visible />
+		<Skills {files} {legoUrl} client:visible />
 	</body>
 </html>

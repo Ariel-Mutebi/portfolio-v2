@@ -1,13 +1,25 @@
 <script lang="ts">
   import { gsap } from 'gsap';
   import Window from './Window.svelte';
+  import type { File, WindowState } from './types.ts';
 
-  const windows = $state([
-    { id: 'frontend', title: 'Front-end', top: 40, left: 40, closed: false },
-    { id: 'backend', title: 'Back-end', top: 100, left: 100, closed: false },
-    { id: 'data', title: 'Data', top: 160, left: 160, closed: false },
-    { id: 'devops', title: 'DevOps', top: 220, left: 220, closed: false },
-  ]);
+  interface Props {
+    files: File[];
+  }
+
+  const { files }: Props = $props();
+  const initialTop = 40;
+  const initialLeft = 500;
+  const distance = 60;
+
+  // svelte-ignore state_referenced_locally
+  const windows = $state<WindowState[]>(files.map((file, index) => ({
+    ...file,
+    id: index,
+    closed: false,
+    top: initialTop + index * distance,
+    left: initialLeft + index * distance,
+  })));
 
   let refs: ReturnType<typeof Window>[] = [];
   const closedCount = $derived(windows.filter((w) => w.closed).length);
@@ -24,10 +36,7 @@
 {#each windows as w, i (w.id)}
   <Window
     bind:this={refs[i]}
-    title={w.title}
-    top={w.top}
-    left={w.left}
-    closed={w.closed}
+    state={w}
     onclose={() => (w.closed = true)}
   />
 {/each}
@@ -35,7 +44,7 @@
 {#if closedCount > 0}
   <button
     type="button"
-    class="pointer-events-auto absolute bottom-4 right-4 bg-white px-3 py-1 text-black"
+    class="pointer-events-auto absolute top-4 right-4 bg-white px-3 py-1 text-black"
     onclick={() => windows.forEach((w) => (w.closed = false))}
   >
     Restore ({closedCount})

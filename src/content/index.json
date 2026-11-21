@@ -123,7 +123,7 @@
     {
       "filename": "DevOps.md",
       "title": "DevOps",
-      "description": "I can't deploy a distributed system to Kubernetes clusters for you - yet! But I can do the plumbing needed to get your app to the world.",
+      "description": "This is a short piece of text that I'm going to write defining dev-ops, and sharing my experience with it.",
       "skills": [
         {
           "name": "Docker",
@@ -160,7 +160,7 @@
     {
       "filename": "ML.md",
       "title": "Machine Learning",
-      "description": "Frankly, my ML skill is nowhere close to worth paying for yet, but I have been researching about AI in cancer research for my TKS focus. It's an honorable mention.",
+      "description": "This is a short piece of text that I'm going to write about my study of machine learning at TKS.",
       "skills": [
         {
           "name": "Python",

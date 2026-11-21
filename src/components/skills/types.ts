@@ -10,3 +10,10 @@ export interface File {
   description: string;
   skills: Skill[];
 }
+
+export interface WindowState extends File {
+  id: number;
+  top: number;
+  left: number;
+  closed: boolean;
+}
