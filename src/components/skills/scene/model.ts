@@ -19,6 +19,9 @@ function centerAndScaleModel(
   model: Object3D,
   targetScale: number
 ): void {
+  // LDraw models are upside down relative to Three.js, so flip first
+  model.rotation.x = Math.PI;
+
   const box = new Box3().setFromObject(model);
 
   const size = box.getSize(new Vector3());

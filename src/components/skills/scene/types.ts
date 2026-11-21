@@ -6,6 +6,8 @@ export interface LegoSceneConfig {
   gridCenterColor?: Color;
   modelPath?: string;
   modelScale?: number;
+  plateCount?: number;
+  dropHeight?: number;
   cameraPosition?: {
     x: number;
     y: number;
@@ -14,5 +16,6 @@ export interface LegoSceneConfig {
 }
 
 export interface LegoSceneInstance {
+  setProgress: (progress: number) => void;
   destroy: () => void;
 }

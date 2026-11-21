@@ -6,6 +6,7 @@
 
   onMount(() => {
     const scene = createLegoScene(container);
+    scene.setProgress(1);
 
     return () => {
       scene.destroy();
