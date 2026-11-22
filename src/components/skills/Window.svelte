@@ -5,6 +5,7 @@
   import type { WindowState } from './types.ts';
   import fileIcon from '../../assets/file-icon.svg';
   import closeIcon from '../../assets/close-icon.svg';
+  import Pill from './Pill.svelte';
 
   interface Props {
     state: WindowState;
@@ -61,10 +62,15 @@
         <img src={closeIcon.src} alt="" />
       </button>
     </header>
-    <div class="p-4 pb-8">
-      <div class="grid gap-3 text-ebony-900">
+    <div class="p-4 pb-8 grid gap-4">
+      <div class="grid gap-2 text-ebony-900">
         <h3 class="text-4xl font-bold">{state.title}</h3>
         <p class="font-sans">{state.description}</p>
+      </div>
+      <div class="flex flex-wrap gap-x-3 gap-y-2">
+        {#each state.skills as skill}
+          <Pill {...skill} />
+        {/each}
       </div>
     </div>
   </article>
