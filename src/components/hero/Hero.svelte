@@ -2,8 +2,8 @@
   import { onMount } from 'svelte';
   import gsap from 'gsap';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
-  import { createHeroScene } from './scene.ts';
-  import type { TerrainMetadata } from './types.ts';
+  import { createHeroScene } from './scene/index.ts';
+  import type { TerrainMetadata } from './scene/types.ts';
 
   import Card from './Card.svelte';
   import Caption from './Caption.svelte';
@@ -94,12 +94,9 @@
         ease: 'none',
       });
 
-      // remove loader after the first frame has been painted
-      new Promise(requestAnimationFrame).then(() => {
-        if (cancelled) return;
-        heroContainer.removeAttribute('data-await-ready');
-        window.dispatchEvent(new Event('page-ready'));
-      });
+      // remove the loader once the scene and timeline are set up
+      heroContainer.removeAttribute('data-await-ready');
+      window.dispatchEvent(new Event('page-ready'));
     });
 
     return () => {

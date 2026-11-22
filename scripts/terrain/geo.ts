@@ -1,5 +1,5 @@
 import { TILE } from './config.ts';
-import type { LonLat } from '../../src/components/hero/types.ts';
+import type { LonLat } from '../../src/components/hero/scene/types.ts';
 
 export const range = (start: number, end: number): number[] =>
   Array.from({ length: end - start + 1 }, (_, i) => start + i);

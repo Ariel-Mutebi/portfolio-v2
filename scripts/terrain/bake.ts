@@ -14,7 +14,7 @@ import {
 } from './config.ts';
 import { metersPerPixelAt, toLonLat, clamp } from './geo.ts';
 import type { Frame, Extent } from './types.ts';
-import type { TerrainMetadata } from '../../src/components/hero/types.ts';
+import type { TerrainMetadata } from '../../src/components/hero/scene/types.ts';
 
 const hash = (x: number, y: number) => {
   const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;

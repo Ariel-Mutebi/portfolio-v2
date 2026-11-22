@@ -1,7 +1,7 @@
 import { WIDTH, HEIGHT, FLAT_RADIUS, FLAT_TOLERANCE, SMOOTHING_RADIUS, SMOOTHING_PASSES } from './config.ts';
 import { range, clamp, toLonLat } from './geo.ts';
 import type { Frame, Extent } from './types.ts';
-import type { LonLat } from '../../src/components/hero/types.ts';
+import type { LonLat } from '../../src/components/hero/scene/types.ts';
 
 export const findExtent = (values: Float32Array): Extent => ({
   min: values.reduce((lowest, value) => Math.min(lowest, value), Infinity),

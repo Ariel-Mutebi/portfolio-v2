@@ -1,4 +1,4 @@
-import type { LonLat } from '../../src/components/hero/types.ts';
+import type { LonLat } from '../../src/components/hero/scene/types.ts';
 
 export const CENTER: LonLat = { lat: 0.0, lon: 29.9 };
 export const ZOOM = 11;
