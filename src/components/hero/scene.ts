@@ -16,6 +16,7 @@ import {
   DoubleSide,
   MathUtils,
   RepeatWrapping,
+  LinearMipMapLinearFilter,
 } from 'three';
 import type { TerrainMetadata } from './types.ts';
 import vertexShader from './shaders/fullscreen.vert?raw';
@@ -38,6 +39,8 @@ async function loadHeightTexture(url: string, width: number, height: number) {
   texture.minFilter = LinearFilter;
   texture.magFilter = LinearFilter;
   texture.needsUpdate = true;
+  texture.generateMipmaps = true;
+  texture.minFilter = LinearMipMapLinearFilter;
   return texture;
 }
 
@@ -199,6 +202,7 @@ export async function createHeroScene(options: SceneOptions) {
       waterTexture.dispose();
       normalTexture.dispose();
       shadowTexture.dispose();
+      noiseTexture.dispose();
       renderer.dispose();
     },
   };

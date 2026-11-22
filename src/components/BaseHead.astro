@@ -57,7 +57,7 @@ const { title, description, image } = Astro.props;
 	gsap.registerPlugin(ScrollTrigger);
 
 	// lower = heavier, slower catch-up
-	const lenis = new Lenis({ lerp: 0.01 });
+	const lenis = new Lenis({ lerp: 0.05 });
 
 	lenis.on("scroll", ScrollTrigger.update);
 	gsap.ticker.add((time) => lenis.raf(time * 1000));

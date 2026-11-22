@@ -56,6 +56,8 @@
           start: 'top top',
           end: 'bottom bottom',
           scrub: 2,
+          onLeave: (self) => self.animation?.progress(1),
+          onLeaveBack: (self) => self.animation?.progress(0),
         },
       });
 
@@ -114,12 +116,7 @@
       class="absolute inset-0 origin-center will-change-transform"
     >
       <!-- Canvas (The Map) -->
-      <canvas
-        bind:this={canvas}
-        class="absolute inset-0 size-full transition-opacity duration-1000"
-        class:opacity-0={isLoading}
-        class:opacity-100={!isLoading}
-      ></canvas>
+      <canvas bind:this={canvas} class="absolute inset-0 size-full"></canvas>
 
       <!-- Frame: negative inset creates the padding around the map -->
       <div class="pointer-events-none absolute inset-[-7%] z-10">
@@ -132,11 +129,7 @@
       </div>
 
       <!-- Card -->
-      <div
-        class="absolute bottom-10 p-10 inset-x-0 flex justify-center transition-opacity duration-1000"
-        class:opacity-0={isLoading}
-        class:opacity-100={!isLoading}
-      >
+      <div class="absolute bottom-10 p-10 inset-x-0 flex justify-center">
         <Card {name} {titles} />
       </div>
     </div>
