@@ -30,8 +30,6 @@
   let canvas: HTMLCanvasElement;
   // svelte-ignore non_reactive_update
   let captionEl: HTMLElement;
-
-  let isLoading = $state(true);
   let frameProgress = $state(0);
 
   onMount(() => {
@@ -45,7 +43,6 @@
       }
 
       sceneDispose = scene.dispose;
-      isLoading = false;
 
       const sceneProxy = { p: 0 };
       const frameProxy = { p: 0 };
@@ -96,6 +93,13 @@
         duration: 50,
         ease: 'none',
       });
+
+      // remove loader after the first frame has been painted
+      new Promise(requestAnimationFrame).then(() => {
+        if (cancelled) return;
+        heroContainer.removeAttribute('data-await-ready');
+        window.dispatchEvent(new Event('page-ready'));
+      });
     });
 
     return () => {
@@ -107,7 +111,7 @@
   });
 </script>
 
-<header bind:this={heroContainer} class="relative h-[300vh] bg-ebony-50">
+<header bind:this={heroContainer} data-await-ready class="relative h-[300vh] bg-ebony-50">
   <div class="sticky top-0 h-dvh w-full overflow-hidden">
     
     <!-- Stage: everything inside here scales together -->
@@ -133,14 +137,5 @@
         <Card {name} {titles} />
       </div>
     </div>
-  </div>
-
-  <!-- Loading overlay -->
-  <div
-    class="pointer-events-none fixed inset-0 z-50 flex flex-col items-center justify-center bg-ebony-50 transition-opacity duration-1000"
-    class:opacity-0={!isLoading}
-  >
-    <div class="mb-4 size-8 animate-spin rounded-full border-2 border-ebony-300 border-t-ebony-800"></div>
-    <p class="animate-pulse font-medium text-ebony-500">Carving the mountains...</p>
   </div>
 </header>

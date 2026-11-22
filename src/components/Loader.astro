@@ -1,0 +1,82 @@
+<div
+  id="page-loader"
+  transition:persist
+  role="status"
+  aria-label="Loading"
+  class="fixed inset-0 z-50 grid place-items-center bg-ebony-50 transition-[opacity,display] transition-discrete duration-700 data-ready:pointer-events-none data-ready:hidden data-ready:opacity-0"
+>
+  <p class="font-mono text-sm text-ebony-700">
+    <span class="text-pollen-600">&gt;</span>
+    <span class="typed">init portfolio</span>
+    <span class="caret"></span>
+  </p>
+</div>
+
+<noscript>
+  <style>
+    #page-loader {
+      display: none;
+    }
+  </style>
+</noscript>
+
+<script is:inline>
+  {
+    const loader = document.getElementById("page-loader");
+    const hide = () => (loader.dataset.ready = "");
+
+    function onLoad() {
+      // The hero of the index page has data to load, after the initial page load.
+      if (document.querySelector("[data-await-ready]")) {
+        addEventListener("page-ready", hide, { once: true });
+      } else {
+        hide();
+      }
+    }
+
+    addEventListener("load", onLoad, { once: true });
+
+    // failsafe: a failed asset never traps the user
+    setTimeout(hide, 8000);
+  }
+</script>
+
+<style>
+  .typed {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    vertical-align: bottom;
+    width: 0;
+    animation: type 1.2s steps(14) forwards; /* runs once, then holds */
+  }
+  .caret {
+    display: inline-block;
+    width: 1ch;
+    height: 1.2em;
+    vertical-align: bottom;
+    background: var(--color-ebony-950);
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes type {
+    to {
+      width: 14ch;
+    }
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .typed {
+      animation: none;
+      width: auto;
+    }
+    .caret {
+      animation: none;
+    }
+  }
+</style>

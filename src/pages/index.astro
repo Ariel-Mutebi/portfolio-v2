@@ -1,5 +1,5 @@
 ---
-import BaseHead from "../components/BaseHead.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 import Hero from "../components/hero/Hero.svelte";
 import page from "../content/index.json";
 import terrain from "../data/terrain.json";
@@ -15,23 +15,17 @@ import legoUrl from "../assets/3031.mpd?url";
 const { hero, statement, files } = page;
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={`${hero.name} | Home`} description={hero.titles} />
-	</head>
-	<body class="font-sans bg-ebony-50 cursor-default">
-		<Hero
-			{...hero}
-			{terrain}
-			{heightmapUrl}
-			{watermaskUrl}
-			{normalmapUrl}
-			{shadowmapUrl}
-			{noisemapUrl}
-			client:load
-		/>
-		<Statement {statement} client:idle />
-		<Skills {files} {legoUrl} client:idle />
-	</body>
-</html>
+<BaseLayout title={`${hero.name} | Home`} description={hero.titles}>
+	<Hero
+		{...hero}
+		{terrain}
+		{heightmapUrl}
+		{watermaskUrl}
+		{normalmapUrl}
+		{shadowmapUrl}
+		{noisemapUrl}
+		client:load
+	/>
+	<Statement {statement} client:idle />
+	<Skills {files} {legoUrl} client:idle />
+</BaseLayout>
