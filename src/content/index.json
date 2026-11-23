@@ -43,8 +43,13 @@
         },
         {
           "name": "ThreeJS",
-          "level": 0,
+          "level": 1,
           "link": "/skills/three-js"
+        },
+        {
+          "name": "OGL",
+          "level": 1,
+          "link": "/skills/ogl"
         },
         {
           "name": "GLSL",
