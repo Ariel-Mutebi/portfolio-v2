@@ -62,3 +62,44 @@ export function snapIndex(
 ): number {
   return clamp(Math.round(position + velocity * projectionMs), 0, lastIndex);
 }
+
+/** How far past the target (in cards) a settle swings, based on release speed. Never zero, so it always feels weighted. */
+export function overshootCards(
+  velocity: number,
+  min = 0.05,
+  max = 0.2,
+  perVelocity = 50
+): number {
+  return clamp(Math.abs(velocity) * perVelocity, min, max);
+}
+
+/** Maps a key press to the card it should select, or null if the key isn't ours. */
+export function keyToIndex(key: string, current: number, lastIndex: number): number | null {
+  switch (key) {
+    case 'ArrowLeft':
+      return clamp(current - 1, 0, lastIndex);
+    case 'ArrowRight':
+      return clamp(current + 1, 0, lastIndex);
+    case 'Home':
+      return 0;
+    case 'End':
+      return lastIndex;
+    default:
+      return null;
+  }
+}
+
+/** Wheel deltas arrive in pixels, lines or pages depending on the device. */
+export function normalizeWheelDelta(delta: number, deltaMode: number): number {
+  return delta * (deltaMode === 1 ? 16 : deltaMode === 2 ? 400 : 1);
+}
+
+/** Swiping left (deltaX > 0) brings later cards to the centre, matching a leftward drag. */
+export function positionFromWheel(
+  position: number,
+  deltaX: number,
+  pxPerCard: number,
+  lastIndex: number
+): number {
+  return clamp(position + deltaX / pxPerCard, 0, lastIndex);
+}
