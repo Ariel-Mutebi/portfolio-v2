@@ -5,6 +5,7 @@
   import { createLegoScene } from './scene/index.ts';
   import Windows from './Windows.svelte';
   import type { File } from './types.ts';
+  import Hint from './Hint.svelte';
 
   interface Props {
     legoUrl: string;
@@ -48,5 +49,7 @@
     <div class="absolute inset-0 z-10 pointer-events-none">
       <Windows {files} bind:this={windows} />
     </div>
+
+    <Hint />
   </div>
 </section>

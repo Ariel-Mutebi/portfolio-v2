@@ -47,6 +47,7 @@
     invisible: state.id !== 0,
   }]}
   style:--index={state.id}
+  data-no-hint
 >
   <article bind:this={win} class="window bg-ebony-50 border-4 border-ebony-200 rounded-lg font-mono">
     <header bind:this={handle} class="handle flex items-center justify-between py-2 px-3 border-b border-b-ebony-200">      <hgroup class="flex items-center gap-1">

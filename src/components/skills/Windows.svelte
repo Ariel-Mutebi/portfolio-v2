@@ -43,6 +43,7 @@
 
 {#if closedCount > 0}
   <button
+    data-no-hint
     type="button"
     class="pointer-events-auto absolute top-4 right-4 px-3 py-1 font-mono
       bg-viridian-200 text-viridian-950 border border-viridian-400
