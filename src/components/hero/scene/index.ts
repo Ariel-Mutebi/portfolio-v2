@@ -52,12 +52,10 @@ export async function createHeroScene({ canvas, terrain, ...urls }: SceneOptions
   await renderer.compileAsync(scene, rig.camera);
   resize();
 
-  // Reading one pixel blocks until the GPU has finished the first frame.
-  const gl = renderer.getContext();
-  gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4));
-
   const observer = new ResizeObserver(resize);
   observer.observe(canvas);
+
+  // Wait to finish painting the first frame
   await new Promise(requestAnimationFrame);
 
   return {

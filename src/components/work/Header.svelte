@@ -43,7 +43,7 @@
   $effect(() => () => exit?.kill());
 </script>
 
-<div bind:this={root} class="w-[min(500px,90dvw)] text-left mix-blend-difference">
+<div bind:this={root} class="w-[min(500px,90dvw)] mix-blend-difference pointer-events-auto">
   {#key version}
     <hgroup use:revealText={{ duration: 0.8, stagger: 0.1 }}>
       <h4 class="reveal-mask text-4xl font-bold text-ebony-400">
