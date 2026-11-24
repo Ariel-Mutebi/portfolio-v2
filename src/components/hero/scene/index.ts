@@ -18,7 +18,11 @@ export async function createHeroScene({ canvas, terrain, ...urls }: SceneOptions
   const scene = new Scene();
   scene.add(new Mesh(geometry, material));
 
-  const renderer = new WebGLRenderer({ canvas, antialias: true });
+  const renderer = new WebGLRenderer({
+    canvas,
+    antialias: false,
+    powerPreference: 'high-performance',
+  });
   renderer.setPixelRatio(1);
   const rig = createCameraRig(canvas, terrainAspect);
 
@@ -47,6 +51,11 @@ export async function createHeroScene({ canvas, terrain, ...urls }: SceneOptions
   // First frame: compile shaders without blocking, draw, then let the browser paint it.
   await renderer.compileAsync(scene, rig.camera);
   resize();
+
+  // Reading one pixel blocks until the GPU has finished the first frame.
+  const gl = renderer.getContext();
+  gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4));
+
   const observer = new ResizeObserver(resize);
   observer.observe(canvas);
   await new Promise(requestAnimationFrame);

@@ -37,6 +37,8 @@ function makeTexture(
   texture.magFilter = LinearFilter;
   texture.unpackAlignment = 1;
   texture.needsUpdate = true;
+  texture.generateMipmaps = true;
+  texture.minFilter = LinearMipmapLinearFilter;
   return texture;
 }
 

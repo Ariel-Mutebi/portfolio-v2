@@ -6,7 +6,7 @@
   let selected = $state(Math.floor((projects.length - 1) / 2)); // start in the middle
 </script>
 
-<div class="min-h-dvh relative">
+<div class="h-dvh relative">
   <Background />
   <Carousel items={projects} bind:selected />
 </div>

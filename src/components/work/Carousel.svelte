@@ -14,7 +14,7 @@
     snapIndex,
     stepAngle,
     type CarouselLayout
-  } from './carousel';
+  } from './carousel.ts';
 
   interface Props {
     items: readonly { title: string }[];
