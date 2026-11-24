@@ -12,24 +12,41 @@
   onMount(() => {
     const area = hint.parentElement!;
 
-    // Anchor the circle's right-middle point to the target position
     gsap.set(hint, { xPercent: -100, yPercent: -50 });
     const moveX = gsap.quickTo(hint, 'x', { duration: 0.35, ease: 'power3' });
     const moveY = gsap.quickTo(hint, 'y', { duration: 0.35, ease: 'power3' });
 
+    let lastX = 0;
+    let lastY = 0;
+    let isMouse = false;
+
+    // True when the 3D background (not a window, not outside the section) is under the point
+    function isOverBackground(x: number, y: number) {
+      const el = document.elementFromPoint(x, y);
+      return !!el && area.contains(el) && !el.closest('[data-no-hint]');
+    }
+
     const onMove = (e: PointerEvent) => {
       if (e.pointerType !== 'mouse') return;
+      isMouse = true;
+      lastX = e.clientX;
+      lastY = e.clientY;
 
-      if ((e.target as Element).closest('[data-no-hint]')) {
+      if (!isOverBackground(lastX, lastY)) {
         visible = false;
         return;
       }
 
-      const x = e.clientX - offset;
-      if (!visible) gsap.set(hint, { x, y: e.clientY });
+      const x = lastX - offset;
+      if (!visible) gsap.set(hint, { x, y: lastY });
       visible = true;
       moveX(x);
-      moveY(e.clientY);
+      moveY(lastY);
+    };
+
+    // The pointer doesn't move while scrolling, so re-check what's under it
+    const onScroll = () => {
+      if (isMouse && visible && !isOverBackground(lastX, lastY)) visible = false;
     };
 
     const onDown = (e: PointerEvent) => {
@@ -44,9 +61,9 @@
     area.addEventListener('pointermove', onMove);
     area.addEventListener('pointerdown', onDown);
     area.addEventListener('pointerleave', onLeave);
-    // On window so releasing the button outside the section still ends the drag
     window.addEventListener('pointerup', onUp);
     window.addEventListener('pointercancel', onUp);
+    window.addEventListener('scroll', onScroll, { passive: true });
 
     return () => {
       area.removeEventListener('pointermove', onMove);
@@ -54,6 +71,7 @@
       area.removeEventListener('pointerleave', onLeave);
       window.removeEventListener('pointerup', onUp);
       window.removeEventListener('pointercancel', onUp);
+      window.removeEventListener('scroll', onScroll);
     };
   });
 </script>

@@ -1,15 +1,21 @@
 <script lang="ts">
   import Background from './Background.svelte';
   import Carousel from './Carousel.svelte';
+  import type { Work } from './types.ts';
 
-  const projects = Array.from({ length: 9 }, (_, i) => ({ id: i, title: `Project ${i + 1}` }));
-  let selected = $state(Math.floor((projects.length - 1) / 2)); // start in the middle
+  interface Props {
+    work: Work[];
+  }
+
+  const { work }: Props = $props();
+  // svelte-ignore state_referenced_locally
+  let selected = $state(Math.floor((work.length - 1) / 2));
 </script>
 
 <div class="h-dvh relative">
   <Background />
-  <Carousel items={projects} bind:selected />
-  <div class="absolute bottom-0 inset-x-0 h-60 flex justify-center">
-    <div class="h-60 w-100 rounded-t-3xl glass"></div>
+  <Carousel items={work} bind:selected />
+  <div class="absolute inset-0 pointer-events-none grid justify-center items-end">
+    <div class="h-70 w-120 rounded-t-3xl glass"></div>
   </div>
 </div>

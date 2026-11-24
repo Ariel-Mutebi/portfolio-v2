@@ -15,9 +15,10 @@
     stepAngle,
     type CarouselLayout
   } from './carousel.ts';
+  import type { Work } from './types.ts';
 
   interface Props {
-    items: readonly { title: string }[];
+    items: Work[];
     selected: number;
   }
 
@@ -25,11 +26,11 @@
 
   // --- Layout ---
   const layout: CarouselLayout = {
-    cardW: 300,
-    cardH: 300,
+    cardW: 250,
+    cardH: 250,
     gap: 180,
     radius: 1400, // radius of the circle
-    centerY: 200 // where the top card's center sits
+    centerY: 175 // where the top card's center sits
   };
   const { cardW, cardH, gap, radius, centerY } = layout;
 
@@ -194,13 +195,22 @@
         bind:this={buttons[i]}
         type="button"
         tabindex={i === selected ? 0 : -1}
-        aria-label={item.title}
+        aria-label={item.project}
         aria-current={i === selected}
         onclick={() => !drag.moved && goTo(i)}
         class="absolute -mt-[calc(var(--card-h)/2)] -ml-[calc(var(--card-w)/2)] h-(--card-h) w-(--card-w)
-          bg-ebony-500 text-ebony-50 flex items-center justify-center text-3xl font-bold"
+          bg-white border border-ebony-400 p-6 shadow-[0px_8px_16px] shadow-ebony-900/25
+          brightness-100 hover:brightness-105 transition-[filter] duration-700"
         style:transform="translate({p.x}px, {p.y}px) rotate({p.angle}deg)"
-      >{i}</button>
+      >
+        <div class="image-grain w-full h-full">
+          <img
+            src={item.thumbnail}
+            alt=""
+            class="w-full h-full object-cover object-center"
+          />
+        </div>
+      </button>
     {/each}
   </div>
 </section>

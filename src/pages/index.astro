@@ -13,7 +13,7 @@ import Skills from "../components/skills/Skills.svelte";
 import legoUrl from "../assets/3031.mpd?url";
 import Work from "../components/work/Work.svelte";
 
-const { hero, statement, files } = page;
+const { hero, statement, files, work } = page;
 ---
 
 <BaseLayout title={`${hero.name} | Home`} description={hero.titles}>
@@ -29,5 +29,5 @@ const { hero, statement, files } = page;
 	/>
 	<Statement {statement} client:idle />
 	<Skills {files} {legoUrl} client:idle />
-	<Work client:idle />
+	<Work {work} client:idle />
 </BaseLayout>

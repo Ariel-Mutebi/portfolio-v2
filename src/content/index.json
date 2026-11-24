@@ -165,7 +165,7 @@
     {
       "filename": "ML.md",
       "title": "Machine Learning",
-      "description": "This is a short piece of text that I'm going to write about my study of machine learning at TKS.",
+      "description": "This is a short piece of text that I'm going to write about my study of machine learning.",
       "skills": [
         {
           "name": "Python",
@@ -188,6 +188,68 @@
           "link": "/skills/crawlers"
         }
       ]
+    }
+  ],
+  "work": [
+    {
+      "time": "2026-now",
+      "project": "TKS",
+      "description": "This is a short description of the kind of work I do at TKS.",
+      "bullets": [
+        "One: here's a bullet point to elaborate, while keeping it easy to digest.",
+        "Two: here's another bullet point to elaborate, while keeping it easy to digest."
+      ],
+      "cta": "Explore TKS",
+      "link": "/projects/tks",
+      "thumbnail": "/placeholder-1.jpg"
+    },
+    {
+      "time": "2026-now",
+      "project": "GrowthLog",
+      "description": "This is a short description of the kind of project that GrowthLog is.",
+      "bullets": [
+        "One: here's a bullet point to elaborate, while keeping it easy to digest.",
+        "Two: here's another bullet point to elaborate, while keeping it easy to digest."
+      ],
+      "cta": "Explore GrowthLog",
+      "link": "/projects/growthlog",
+      "thumbnail": "/placeholder-2.jpg"
+    },
+    {
+      "time": "2025-2026",
+      "project": "Mapka",
+      "description": "This is a short description of the kind of work I did at Mapka.",
+      "bullets": [
+        "One: here's a bullet point to elaborate, while keeping it easy to digest.",
+        "Two: here's another bullet point to elaborate, while keeping it easy to digest."
+      ],
+      "cta": "Explore Mapka",
+      "link": "/projects/mapka",
+      "thumbnail": "/placeholder-3.jpg"
+    },
+    {
+      "time": "2023-2025",
+      "project": "TOP",
+      "description": "This is a short description of my education at The Odin Project.",
+      "bullets": [
+        "One: here's a bullet point to elaborate, while keeping it easy to digest.",
+        "Two: here's another bullet point to elaborate, while keeping it easy to digest."
+      ],
+      "cta": "Explore TOP",
+      "link": "/projects/top",
+      "thumbnail": "/placeholder-4.jpg"
+    },
+    {
+      "time": "2021-2023",
+      "project": "Beginnings",
+      "description": "This is a longer description of how I got interested in web development",
+      "bullets": [
+        "One: here's a bullet point to elaborate, while keeping it easy to digest.",
+        "Two: here's another bullet point to elaborate, while keeping it easy to digest."
+      ],
+      "cta": "Read my story",
+      "link": "/beginnings",
+      "thumbnail": "/placeholder-5.jpg"
     }
   ]
 }

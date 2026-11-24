@@ -8,6 +8,7 @@
 @theme static {
   --color-*: initial;
 
+  --color-white: #FFFFFF;
   --color-ebony-50: #F9FAF9;
   --color-ebony-100: #F4F5F4;
   --color-ebony-200: #E7E8E3;
@@ -92,6 +93,28 @@
   .magnetic-char {
     display: inline-block;
   }
+
+  .image-grain {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .image-grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 700ms ease-out;
+
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    mix-blend-mode: overlay;
+  }
+
+  .image-grain:hover::after {
+    opacity: 1;
+  }
 }
 
 .glass {
@@ -105,7 +128,7 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-/* 4. Specular rim – light catching the top-left edge */
+/* Specular rim – light catching the top-left edge */
 .glass::before {
   content: "";
   position: absolute;
@@ -125,7 +148,7 @@
   pointer-events: none;
 }
 
-/* 5. Edge depth – inner shadows that simulate the glass lip */
+/* Edge depth – inner shadows that simulate the glass lip */
 .glass::after {
   content: "";
   position: absolute;
