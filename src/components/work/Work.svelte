@@ -9,4 +9,7 @@
 <div class="h-dvh relative">
   <Background />
   <Carousel items={projects} bind:selected />
+  <div class="absolute bottom-0 inset-x-0 h-60 flex justify-center">
+    <div class="h-60 w-100 rounded-t-3xl glass"></div>
+  </div>
 </div>

@@ -94,3 +94,52 @@
   }
 }
 
+.glass {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  -webkit-backdrop-filter: blur(8px) saturate(180%) contrast(1.05);
+  backdrop-filter: blur(8px) saturate(180%) contrast(1.05);
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* 4. Specular rim – light catching the top-left edge */
+.glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  /* rim thickness */
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0) 40%,
+      rgba(255, 255, 255, 0) 60%,
+      rgba(255, 255, 255, 0.2) 100%);
+  /* Mask trick: show only the 1px ring, punch out the interior */
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* 5. Edge depth – inner shadows that simulate the glass lip */
+.glass::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  /* align to the border box */
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.35),
+    /* sharp top-left */
+    inset 2px 2px 8px rgba(255, 255, 255, 0.2),
+    /* soft bloom top-left */
+    inset -1px -1px 0 rgba(255, 255, 255, 0.1),
+    /* faint bottom-right */
+    inset 0 0 20px rgba(255, 255, 255, 0.05);
+  /* very subtle inner glow */
+}
