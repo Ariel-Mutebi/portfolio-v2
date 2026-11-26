@@ -52,32 +52,36 @@ const { links } = menu;
 </dialog>
 
 <script>
-  const menu = document.getElementById("menu") as HTMLDialogElement;
-  const trigger = document.getElementById("open-menu") as HTMLButtonElement;
+  function main() {
+    const menu = document.getElementById("menu") as HTMLDialogElement;
+    const trigger = document.getElementById("open-menu") as HTMLButtonElement;
 
-  /** Slides the menu out, then closes it. */
-  async function closeMenu() {
-    menu.toggleAttribute("data-closing", true);
-    await Promise.allSettled(
-      menu.getAnimations().map((animation) => animation.finished),
-    );
-    menu.close();
-    menu.removeAttribute("data-closing");
+    /** Slides the menu out, then closes it. */
+    async function closeMenu() {
+      menu.toggleAttribute("data-closing", true);
+      await Promise.allSettled(
+        menu.getAnimations().map((animation) => animation.finished),
+      );
+      menu.close();
+      menu.removeAttribute("data-closing");
+    }
+
+    trigger.addEventListener("click", () => menu.showModal());
+
+    /** Close on a backdrop click or when a link is chosen. */
+    menu.addEventListener("click", (event) => {
+      const target = event.target as HTMLElement;
+      if (target === menu || target.closest("a")) closeMenu();
+    });
+
+    /** Esc: replace the instant close with the animated one. */
+    menu.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      closeMenu();
+    });
+
+    document.getElementById("close-menu")!.addEventListener("click", closeMenu);
   }
 
-  trigger.addEventListener("click", () => menu.showModal());
-
-  /** Close on a backdrop click or when a link is chosen. */
-  menu.addEventListener("click", (event) => {
-    const target = event.target as HTMLElement;
-    if (target === menu || target.closest("a")) closeMenu();
-  });
-
-  /** Esc: replace the instant close with the animated one. */
-  menu.addEventListener("cancel", (event) => {
-    event.preventDefault();
-    closeMenu();
-  });
-
-  document.getElementById("close-menu")!.addEventListener("click", closeMenu);
+  document.addEventListener("astro:page-load", main);
 </script>
