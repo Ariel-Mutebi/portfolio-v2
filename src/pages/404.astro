@@ -1,5 +1,8 @@
 ---
 import Head from "../components/Head.astro";
+import { createGame } from "../components/404/game.ts";
+
+const bricks = createGame().bricks.length;
 ---
 
 <!doctype html>
@@ -9,7 +12,73 @@ import Head from "../components/Head.astro";
     description="The page you're looking for could not be found"
   />
 
-  <body class="bg-ebony-950 font-mono text-ebony-100">
-    <p>404</p>
+  <style>
+    canvas:focus-visible {
+      outline: 1px solid var(--color-ebony-50);
+      outline-offset: 3px;
+    }
+
+    [data-cursor] {
+      animation: blink 1.06s steps(1, end) infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      [data-cursor] {
+        animation: none;
+      }
+    }
+  </style>
+
+  <body class="grid min-h-dvh content-center justify-items-center bg-ebony-950 px-5 py-8 font-mono text-sm leading-relaxed text-ebony-100 antialiased">
+    <main class="w-full max-w-2xl">
+      <p class="mb-1 whitespace-pre-wrap wrap-anywhere">
+        <span class="text-ebony-500">ariel@portfolio:~$</span> cd{" "}
+        <span data-path>/</span>
+      </p>
+      <p class="mb-5 whitespace-pre-wrap">
+        error 404: not built yet, or never existed
+      </p>
+
+      <div class="mb-5">
+        <canvas
+          data-game
+          width="320"
+          height="200"
+          tabindex="0"
+          aria-label="Breakout game. Break the bricks that spell 404. Press space or tap to start, then move the paddle with the arrow keys, A and D, the mouse, or a finger."
+          class="block h-auto w-full cursor-crosshair touch-none bg-ebony-950 outline-none [image-rendering:pixelated]"
+        ></canvas>
+        <p class="mt-2 whitespace-pre-wrap" aria-live="polite">
+          <span aria-hidden="true">&gt; </span>
+          <span data-status>press space or tap to start</span>
+          <span data-cursor class="text-ebony-50" aria-hidden="true">
+            _
+          </span>
+        </p>
+      </div>
+
+      <nav class="flex items-baseline gap-4">
+        <a
+          href="/"
+          class="text-inherit no-underline hover:text-ebony-50 focus-visible:text-ebony-50"
+        >
+          [HOME]
+        </a>
+        <span class="ml-auto text-ebony-500">
+          bricks: <span data-bricks>{bricks}</span>
+        </span>
+      </nav>
+    </main>
+
+    <script>
+      import { mount } from "../components/404/main.ts";
+      mount();
+    </script>
   </body>
 </html>

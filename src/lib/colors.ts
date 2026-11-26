@@ -4,7 +4,7 @@ import { Color as OGLColor } from 'ogl';
 /**
  * Resolves a CSS custom property from the document root.
  */
-function getCSSColorValue(name: string): string {
+export function getCSSColorValue(name: string): string {
   if (typeof document === 'undefined') {
     throw new Error(`Cannot resolve CSS variable "${name}" outside the browser`);
   }
