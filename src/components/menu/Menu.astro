@@ -9,7 +9,7 @@ const { links } = menu;
   label="MENU"
   id="open-menu"
   aria-haspopup="dialog"
-  class="fixed z-40 top-6 right-6 font-mono text-xl text-ebony-400 mix-blend-difference"
+  class="fixed z-40 top-6 right-6 text-ebony-400 mix-blend-difference"
 />
 
 <dialog
@@ -27,6 +27,9 @@ const { links } = menu;
     "backdrop:transition-[backdrop-filter] backdrop:duration-200 motion-reduce:backdrop:transition-none",
   ]}
 >
+  <nav class="py-10 px-5 md:px-10">
+    <Button label="CLOSE" id="close-menu" class="text-chilli-900" />
+  </nav>
 </dialog>
 
 <script>
@@ -36,7 +39,9 @@ const { links } = menu;
   /** Slides the menu out, then closes it. */
   async function closeMenu() {
     menu.toggleAttribute("data-closing", true);
-    await Promise.allSettled(menu.getAnimations().map((animation) => animation.finished));
+    await Promise.allSettled(
+      menu.getAnimations().map((animation) => animation.finished),
+    );
     menu.close();
     menu.removeAttribute("data-closing");
   }
@@ -54,4 +59,6 @@ const { links } = menu;
     event.preventDefault();
     closeMenu();
   });
+
+  document.getElementById("close-menu")!.addEventListener("click", closeMenu);
 </script>
