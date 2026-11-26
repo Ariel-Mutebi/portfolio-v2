@@ -5,7 +5,7 @@ export const PADDLE = { y: 184, w: 48, h: 6 } as const;
 
 export interface Rect { x: number; y: number; w: number; h: number }
 export interface Ball { x: number; y: number; vx: number; vy: number }
-export type Phase = 'idle' | 'playing' | 'won';
+export type Phase = 'idle' | 'playing' | 'won' | 'lost';
 
 export interface Game {
   readonly phase: Phase;
@@ -77,7 +77,11 @@ function simulate(
   bricks: readonly Rect[],
   paddleX: number,
   dt: number
-): { ball: Ball; bricks: readonly Rect[] } {
+): {
+  ball: Ball;
+  bricks: readonly Rect[];
+  missed: boolean;
+} {
   const b: Ball = { ...ball };
   let list = bricks;
 
@@ -107,9 +111,9 @@ function simulate(
     b.vy = -Math.abs(b.vy);
   }
 
-  if (b.y > H) return { ball: serve(), bricks: list };
+  if (b.y > H) return { ball: b, bricks: list, missed: true };
 
-  return { ball: b, bricks: list };
+  return { ball: b, bricks: list, missed: false };
 }
 
 /** Advances the game by exactly `dt` seconds. Returns a new state. */
@@ -119,10 +123,8 @@ export function step(game: Game, dt: number, input: Input): Game {
 
   const next = simulate(game.ball, game.bricks, paddleX, dt);
 
-  return {
-    phase: next.bricks.length === 0 ? 'won' : 'playing',
-    ball: next.ball,
-    paddleX,
-    bricks: next.bricks,
-  };
+  const phase: Phase =
+    next.bricks.length === 0 ? 'won' : next.missed ? 'lost' : 'playing';
+
+  return { phase, ball: next.ball, paddleX, bricks: next.bricks };
 }

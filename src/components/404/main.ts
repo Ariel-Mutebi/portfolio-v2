@@ -30,12 +30,16 @@ export function mount(): void {
       shownCount = game.bricks.length;
       countEl.textContent = String(shownCount);
     }
+
     const text =
       game.phase === 'won'
-        ? 'demolition complete. [R] rebuild'
-        : game.phase === 'playing'
-          ? 'move: arrows / A D / mouse / finger'
-          : 'press space or tap to start';
+        ? 'demolition complete. [space] or [R] rebuild'
+        : game.phase === 'lost'
+          ? 'game over. [space] or [R] restart'
+          : game.phase === 'playing'
+            ? 'move: arrows / A D / mouse / finger'
+            : 'press space or tap to start';
+
     if (statusEl && text !== shownStatus) {
       shownStatus = text;
       statusEl.textContent = text;
@@ -89,6 +93,12 @@ export function mount(): void {
       e.preventDefault();
       game = start(game);
     } else if ((e.key === 'r' || e.key === 'R') && game.phase === 'won') {
+      e.preventDefault();
+      game = start(game);
+    } else if (
+      (e.key === 'r' || e.key === 'R') &&
+      (game.phase === 'won' || game.phase === 'lost')
+    ) {
       e.preventDefault();
       game = start(game);
     }
