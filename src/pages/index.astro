@@ -12,11 +12,8 @@ import Statement from "../components/statement/Statement.svelte";
 import Skills from "../components/skills/Skills.svelte";
 import legoUrl from "../assets/3031.mpd?url";
 import Work from "../components/work/Work.svelte";
-import footerContent from "../content/footer.json";
-import Footer from "../components/Footer.astro";
 
 const { hero, statement, files, work } = page;
-const { cta, socials } = footerContent;
 ---
 
 <BaseLayout title={`${hero.name} | Home`} description={hero.titles}>
@@ -33,5 +30,4 @@ const { cta, socials } = footerContent;
 	<Statement {statement} client:idle />
 	<Skills {files} {legoUrl} client:idle />
 	<Work {work} client:idle />
-	<Footer {cta} {socials} />
 </BaseLayout>

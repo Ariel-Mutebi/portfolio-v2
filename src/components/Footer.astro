@@ -1,17 +1,9 @@
 ---
 import { Image } from "astro:assets";
 import me from "../assets/me.jpg";
+import footer from "../content/footer.json";
 
-interface Props {
-  cta: string;
-  socials: {
-    icon: string;
-    text: string;
-    link: string;
-  }[];
-}
-
-const { cta, socials } = Astro.props;
+const { cta, socials } = footer;
 ---
 
 <footer class="grid md:grid-cols-[1fr_2fr] gap-12 min-h-dvh bg-viridian-50 p-10 pt-60">
