@@ -34,7 +34,7 @@
   });
 </script>
 
-<div bind:this={section} class="min-h-175 h-dvh relative">
+<div bind:this={section} class="h-dvh relative">
   <Background />
   <Carousel items={work} bind:selected />
   <div class="absolute inset-0 pointer-events-none flex flex-col justify-between items-center pt-20">

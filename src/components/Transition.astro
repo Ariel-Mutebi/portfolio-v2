@@ -1,0 +1,25 @@
+<style is:global>
+  @keyframes terminal-redraw {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html::view-transition-old(root),
+    html::view-transition-new(root) {
+      mix-blend-mode: normal;
+    }
+
+    html::view-transition-old(root) {
+      animation: none !important;
+    }
+
+    html::view-transition-new(root) {
+      animation: terminal-redraw 450ms steps(24, end) both !important;
+    }
+  }
+</style>
