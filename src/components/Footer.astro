@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import me from "../assets/me.jpg";
+import Dither from "./dither/Dither.svelte";
 
 interface Props {
   cta: string;
@@ -14,7 +15,12 @@ interface Props {
 const { cta, socials } = Astro.props;
 ---
 
-<footer class="grid md:grid-cols-[1fr_2fr] gap-12 min-h-dvh bg-viridian-50 p-10 pt-40">
+<footer class="relative grid md:grid-cols-[1fr_2fr] gap-12 min-h-dvh bg-viridian-50 p-10 pt-60">
+  <Dither
+    base="--color-viridian-50"
+    ink="--color-ebony-200"
+    client:visible
+  />
   <div class="image-grain image-grain-static aspect-4/5">
     <Image
       src={me}
@@ -26,7 +32,7 @@ const { cta, socials } = Astro.props;
     />
   </div>
 
-  <div class="flex flex-col justify-start gap-2 sm:gap-5">
+  <div class="flex flex-col justify-start gap-2 sm:gap-5 relative z-10">
     <h3 class="text-ebony-950 font-bold text-4xl sm:text-6xl">{cta}</h3>
     <ul>
       {socials.map(({ icon, text, link }) => (
@@ -34,7 +40,7 @@ const { cta, socials } = Astro.props;
           <a
             href={link}
             class="relative isolate flex items-end gap-5 p-5 pb-3 font-mono text-2xl sm:text-3xl text-ebony-600
-              font-bold transition-colors duration-150 hover:text-steel-50 focus-visible:text-steel-50
+              font-bold transition-colors duration-150 hover:text-viridian-50 focus-visible:text-viridian-50
               before:absolute before:inset-0 before:-z-10 before:bg-ebony-600 before:origin-left
               before:scale-x-0 before:transition-transform before:duration-300 before:ease-[steps(40)]
               hover:before:scale-x-100 focus-visible:before:scale-x-100 motion-reduce:transition-none
