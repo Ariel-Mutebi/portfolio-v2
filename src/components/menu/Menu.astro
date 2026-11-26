@@ -28,7 +28,26 @@ const { links } = menu;
   ]}
 >
   <nav class="py-10 px-5 md:px-10">
-    <Button label="CLOSE" id="close-menu" class="text-chilli-900" />
+    <Button
+      label="CLOSE"
+      id="close-menu"
+      class="text-chilli-900 mb-5 md:mb-10"
+    />
+    <ul class="flex flex-col gap-5 md:gap-10">
+      {links.map(({ href, label }) => (
+        <li>
+          <a
+            class="relative inline-block font-mono text-viridian-900 text-4xl md:text-6xl
+              after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-current
+              after:origin-left after:scale-x-0 after:transition-transform after:duration-300
+              hover:after:scale-x-100 focus-visible:after:scale-x-100 motion-reduce:after:transition-none"
+            {href}
+          >
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
   </nav>
 </dialog>
 
