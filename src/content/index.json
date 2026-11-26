@@ -201,7 +201,7 @@
       ],
       "cta": "Explore TKS",
       "link": "/projects/tks",
-      "thumbnail": "/placeholder-1.jpg"
+      "thumbnail": "/work/placeholder-1.jpg"
     },
     {
       "time": "2026-now",
@@ -213,7 +213,7 @@
       ],
       "cta": "Explore GrowthLog",
       "link": "/projects/growthlog",
-      "thumbnail": "/placeholder-2.jpg"
+      "thumbnail": "/work/placeholder-2.jpg"
     },
     {
       "time": "2025-2026",
@@ -225,7 +225,7 @@
       ],
       "cta": "Explore Mapka",
       "link": "/projects/mapka",
-      "thumbnail": "/placeholder-3.jpg"
+      "thumbnail": "/work/placeholder-3.jpg"
     },
     {
       "time": "2023-2025",
@@ -237,7 +237,7 @@
       ],
       "cta": "Explore TOP",
       "link": "/projects/top",
-      "thumbnail": "/placeholder-4.jpg"
+      "thumbnail": "/work/placeholder-4.jpg"
     },
     {
       "time": "2021-2023",
@@ -249,7 +249,7 @@
       ],
       "cta": "Read my story",
       "link": "/beginnings",
-      "thumbnail": "/placeholder-5.jpg"
+      "thumbnail": "/work/placeholder-5.jpg"
     }
   ]
 }

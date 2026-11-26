@@ -1,0 +1,25 @@
+{
+  "cta": "Let's talk!",
+  "socials": [
+    {
+      "icon": "/social/calendar.svg",
+      "text": "Book a call",
+      "link": "https://calendly.com/arielmutebi-social/30min"
+    },
+    {
+      "icon": "/social/envelope.svg",
+      "text": "Email me",
+      "link": "mailto:arielmutebi.social@gmail.com"
+    },
+    {
+      "icon": "/social/linkedin.svg",
+      "text": "LinkedIn",
+      "link": "https://www.linkedin.com/in/ariel-robert-mutebi/"
+    },
+    {
+      "icon": "/social/github.svg",
+      "text": "Github",
+      "link": "https://github.com/Ariel-Mutebi"
+    }
+  ]
+}
