@@ -1,13 +1,13 @@
 ---
-import menu from "../content/menu.json";
+import menu from "../../content/menu.json";
+import Button from "./Button.astro";
+
 const { links } = menu;
 ---
 
-<button
-  type="button"
+<Button
+  label="MENU"
   id="open-menu"
   aria-haspopup="dialog"
   class="fixed z-40 top-6 right-6 font-mono text-xl text-ebony-400 mix-blend-difference"
->
-  [MENU]
-</button>
+/>
