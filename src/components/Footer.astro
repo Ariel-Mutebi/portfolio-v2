@@ -14,7 +14,7 @@ interface Props {
 const { cta, socials } = Astro.props;
 ---
 
-<footer class="grid md:grid-cols-[1fr_2fr] gap-12 min-h-dvh bg-viridian-50 px-10 py-20">
+<footer class="grid md:grid-cols-[1fr_2fr] gap-12 min-h-dvh bg-viridian-50 p-10 pt-40">
   <div class="image-grain image-grain-static aspect-4/5">
     <Image
       src={me}
@@ -26,21 +26,21 @@ const { cta, socials } = Astro.props;
     />
   </div>
 
-  <div class="flex flex-col justify-start gap-10">
-    <h3 class="text-ebony-950 font-bold text-6xl">{cta}</h3>
+  <div class="flex flex-col justify-start gap-2 sm:gap-5">
+    <h3 class="text-ebony-950 font-bold text-4xl sm:text-6xl">{cta}</h3>
     <ul>
       {socials.map(({ icon, text, link }) => (
         <li class="border-b border-ebony-200">
           <a
             href={link}
-            class="relative isolate flex items-end gap-5 p-5 pb-3 font-mono text-3xl text-ebony-600
+            class="relative isolate flex items-end gap-5 p-5 pb-3 font-mono text-2xl sm:text-3xl text-ebony-600
               font-bold transition-colors duration-150 hover:text-steel-50 focus-visible:text-steel-50
               before:absolute before:inset-0 before:-z-10 before:bg-ebony-600 before:origin-left
               before:scale-x-0 before:transition-transform before:duration-300 before:ease-[steps(40)]
-              hover:before:scale-x-100 focus-visible:before:scale-x-100
-              motion-reduce:transition-none motion-reduce:before:transition-none"
+              hover:before:scale-x-100 focus-visible:before:scale-x-100 motion-reduce:transition-none
+              motion-reduce:before:transition-none"
           >
-            <img src={icon} alt="" />
+            <img src={icon} alt="" class="size-6 sm:size-12" />
             {text}
           </a>
         </li>
