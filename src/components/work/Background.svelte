@@ -22,7 +22,7 @@
   });
 </script>
 
-<div class="absolute inset-0 overflow-hidden pointer-events-none">
+<div class="absolute inset-0 overflow-hidden pointer-events-none bg-ebony-50">
   <div bind:this={textTrack} class="will-change-transform">
     {#each Array(20) as _, i}
       <div class="flex h-[16dvw] items-center overflow-hidden">
