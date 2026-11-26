@@ -11,3 +11,47 @@ const { links } = menu;
   aria-haspopup="dialog"
   class="fixed z-40 top-6 right-6 font-mono text-xl text-ebony-400 mix-blend-difference"
 />
+
+<dialog
+  id="menu"
+  aria-label="Site menu"
+  class:list={[
+    /** Panel */
+    "fixed inset-y-0 right-0 left-auto z-50 w-[80dvw] max-w-150 h-dvh max-h-none bg-steel-200",
+    /** Slide */
+    "translate-x-full open:translate-x-0 starting:open:translate-x-full data-closing:translate-x-full",
+    "transition-[translate] duration-200 ease-[ease] motion-reduce:transition-none",
+    /** Backdrop blur */
+    "backdrop:bg-transparent backdrop:backdrop-blur-xs",
+    "starting:open:backdrop:backdrop-blur-[0px] data-closing:backdrop:backdrop-blur-[0px]",
+    "backdrop:transition-[backdrop-filter] backdrop:duration-200 motion-reduce:backdrop:transition-none",
+  ]}
+>
+</dialog>
+
+<script>
+  const menu = document.getElementById("menu") as HTMLDialogElement;
+  const trigger = document.getElementById("open-menu") as HTMLButtonElement;
+
+  /** Slides the menu out, then closes it. */
+  async function closeMenu() {
+    menu.toggleAttribute("data-closing", true);
+    await Promise.allSettled(menu.getAnimations().map((animation) => animation.finished));
+    menu.close();
+    menu.removeAttribute("data-closing");
+  }
+
+  trigger.addEventListener("click", () => menu.showModal());
+
+  /** Close on a backdrop click or when a link is chosen. */
+  menu.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement;
+    if (target === menu || target.closest("a")) closeMenu();
+  });
+
+  /** Esc: replace the instant close with the animated one. */
+  menu.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeMenu();
+  });
+</script>
