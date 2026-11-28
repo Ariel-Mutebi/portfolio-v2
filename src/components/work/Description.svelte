@@ -15,8 +15,8 @@
   {#key selected}
     <div class="grid gap-4" in:fade={{ duration: 400 }}>
       <div class="grid gap-2">
-        <p class="text-ebony-900 text-xl leading-relaxed">{item.description}</p>
-        <ul class="text-ebony-600 list-disc marker:text-ebony-600 pl-4 space-y-3">
+        <p class="text-ebony-900 leading-relaxed">{item.description}</p>
+        <ul class="text-ebony-600 list-disc marker:text-ebony-600 pl-4 space-y-3 text-sm">
           {#each item.bullets as bullet}
             <li>{bullet}</li>
           {/each}

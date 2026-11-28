@@ -348,62 +348,59 @@
     {
       "time": "2026-now",
       "project": "TKS",
-      "description": "This is a short description of the kind of work I do at TKS.",
+      "description": "TKS is an accelerator program for young innovators with a focus on emerging technologies.",
       "bullets": [
-        "Here's a bullet point to elaborate, while keeping it easy to digest.",
-        "Here's another bullet point to elaborate, while keeping it easy to digest."
+        "Its 'focus process', a timeline where you progress from learning about a domain to creating something new in it, sparked my interest in AI for cancer diagnostics.",
+        "Its global community and 'brain-date' culture helped me network with people around the world."
       ],
       "cta": "Explore TKS",
       "link": "/projects/tks",
-      "thumbnail": "/work/placeholder-1.jpg"
+      "thumbnail": "/work/tks.png"
     },
     {
       "time": "2026-now",
       "project": "GrowthLog",
-      "description": "This is a short description of the kind of project that GrowthLog is.",
+      "description": "After leaving Mapka, I felt the need to create a portfolio project that represented the calibre of builder that I had become. That's the blogging platform GrowthLog.",
       "bullets": [
-        "Here's a bullet point to elaborate, while keeping it easy to digest.",
-        "Here's another bullet point to elaborate, while keeping it easy to digest."
+        "I learnt Figma and designed the interface by hand before implementing them with Astro, Svelte, and Tailwind.",
+        "The back-end uses Fastify, Prisma ORM, BullMQ, Redis, and PostgreSQL, with validation and integration testing."
       ],
       "cta": "Explore GrowthLog",
       "link": "/projects/growthlog",
-      "thumbnail": "/work/placeholder-2.jpg"
+      "thumbnail": "/work/growthlog.jpg"
     },
     {
       "time": "2025-2026",
       "project": "Mapka",
-      "description": "This is a short description of the kind of work I did at Mapka.",
+      "description": "Mapka is an AI-powered GIS platform where I worked alongside the founder as a remote junior full-stack developer.",
       "bullets": [
-        "Here's a bullet point to elaborate, while keeping it easy to digest.",
-        "Here's another bullet point to elaborate, while keeping it easy to digest."
+        "It was my first exposure to production software, teaching me industry standards from design systems to Redis to Docker.",
+        "The role was very asynchronous, starting with a Linear ticket, ending with a PR review. High-agency throughout."
       ],
       "cta": "Explore Mapka",
       "link": "/projects/mapka",
-      "thumbnail": "/work/placeholder-3.jpg"
+      "thumbnail": "/work/mapka.png"
     },
     {
       "time": "2023-2025",
       "project": "TOP",
-      "description": "This is a short description of my education at The Odin Project.",
+      "description": "The Odin Project's full-stack JavaScript course took me from being a hobbyist who followed tutorials to a developer who could put together a rough MVP.",
       "bullets": [
-        "Here's a bullet point to elaborate, while keeping it easy to digest.",
-        "Here's another bullet point to elaborate, while keeping it easy to digest."
+        "It didn't just teach me HTML, CSS, JavaScript, React, Express, Prisma, and PostgreSQL.",
+        "It taught me the paradigms that differentiate a coder from a software engineer, fostering the curiosity and drive required to build something great."
       ],
       "cta": "Explore TOP",
       "link": "/projects/top",
-      "thumbnail": "/work/placeholder-4.jpg"
+      "thumbnail": "/work/top.png"
     },
     {
       "time": "2021-2023",
       "project": "Beginnings",
-      "description": "This is a longer description of how I got interested in web development",
-      "bullets": [
-        "Here's a bullet point to elaborate, while keeping it easy to digest.",
-        "Here's another bullet point to elaborate, while keeping it easy to digest."
-      ],
+      "description": "As a child, I dreamed of becoming an aerodynamicist at Porsche, of working at the intersection of design and engineering. Full-stack web development gave me a more accessible path to working at the exact same intersection, in a domain of global impact.",
+      "bullets": [],
       "cta": "Read my story",
       "link": "/beginnings",
-      "thumbnail": "/work/placeholder-5.jpg"
+      "thumbnail": "/work/porsche.jpg"
     }
   ]
 }
