@@ -7,7 +7,7 @@ export function getDefaultConfig(): Required<LegoSceneConfig> {
     gridColor: threeColor('--color-ebony-300'),
     gridCenterColor: threeColor('--color-ebony-400'),
     modelScale: 1.2,
-    plateCount: 4,
+    plateCount: 6,
     dropHeight: 1.5,
     cameraPosition: {
       x: 3,

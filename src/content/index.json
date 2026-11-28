@@ -9,7 +9,7 @@
     {
       "filename": "Interfaces.md",
       "title": "User Interfaces",
-      "description": "This is a short piece of text that I'm going to write about UIs and my approach to them",
+      "description": "I build fast, component-driven interfaces with a clear visual identity, using motion and graphics to help tell the story. The goal: easy to use, hard to forget.",
       "skills": [
         {
           "name": "Svelte",
@@ -22,6 +22,11 @@
           "link": "/skills/react"
         },
         {
+          "name": "React Router",
+          "level": 2,
+          "link": "/skills/react-router"
+        },
+        {
           "name": "Astro",
           "level": 2,
           "link": "/skills/astro"
@@ -32,9 +37,29 @@
           "link": "/skills/tailwind"
         },
         {
+          "name": "Mantine",
+          "level": 2,
+          "link": "/skills/mantine"
+        },
+        {
           "name": "Figma",
           "level": 2,
           "link": "/skills/figma"
+        },
+        {
+          "name": "MUI",
+          "level": 1,
+          "link": "/skills/mui"
+        },
+        {
+          "name": "Vite",
+          "level": 1,
+          "link": "/skills/vite"
+        },
+        {
+          "name": "D3.js",
+          "level": 1,
+          "link": "/skills/d3"
         },
         {
           "name": "GSAP",
@@ -42,7 +67,7 @@
           "link": "/skills/gsap"
         },
         {
-          "name": "ThreeJS",
+          "name": "Three.js",
           "level": 1,
           "link": "/skills/three-js"
         },
@@ -61,7 +86,7 @@
     {
       "filename": "Servers.md",
       "title": "Servers",
-      "description": "This is a short piece of text that I'm going to write about server-side programming and my approach to it",
+      "description": "I build back ends with clear API contracts, validated inputs, and background jobs for slow work. My experience spans Mapka, a GIS mapping platform, and GrowthLog, a publishing platform I built.",
       "skills": [
         {
           "name": "Node",
@@ -99,6 +124,16 @@
           "link": "/skills/drizzle-orm"
         },
         {
+          "name": "Authentication & Sessions",
+          "level": 2,
+          "link": "/skills/authentication"
+        },
+        {
+          "name": "API Security",
+          "level": 2,
+          "link": "/skills/api-security"
+        },
+        {
           "name": "Background Jobs",
           "level": 2,
           "link": "/skills/background-jobs"
@@ -119,16 +154,31 @@
           "link": "/skills/object-storage"
         },
         {
+          "name": "AI Integration",
+          "level": 1,
+          "link": "/skills/ai-integration"
+        },
+        {
+          "name": "Convex",
+          "level": 1,
+          "link": "/skills/convex"
+        },
+        {
           "name": "Redis",
           "level": 1,
           "link": "/skills/redis"
+        },
+        {
+          "name": "Hono",
+          "level": 1,
+          "link": "/skills/hono"
         }
       ]
     },
     {
       "filename": "DevOps.md",
       "title": "DevOps",
-      "description": "This is a short piece of text that I'm going to write defining dev-ops, and sharing my experience with it.",
+      "description": "I care about shipping, not just building. For GrowthLog's MVP, I deployed CI-built containers to a VPS with Dokploy, with Cloudflare R2 for object storage.",
       "skills": [
         {
           "name": "Docker",
@@ -141,7 +191,7 @@
           "link": "/skills/docker-compose"
         },
         {
-          "name": "Github Actions",
+          "name": "GitHub Actions",
           "level": 2,
           "link": "/skills/github-actions"
         },
@@ -156,6 +206,21 @@
           "link": "/skills/cloudflare-r2"
         },
         {
+          "name": "Cloudflare Workers",
+          "level": 1,
+          "link": "/skills/cloudflare-workers"
+        },
+        {
+          "name": "Traefik",
+          "level": 1,
+          "link": "/skills/traefik"
+        },
+        {
+          "name": "Caddy",
+          "level": 1,
+          "link": "/skills/caddy"
+        },
+        {
           "name": "Managing a VPS",
           "level": 1,
           "link": "/skills/vps"
@@ -163,9 +228,93 @@
       ]
     },
     {
+      "filename": "Engineering.md",
+      "title": "Engineering Practices",
+      "description": "I test against real infrastructure and document the reasoning behind decisions. In open source, I traced a Node module resolution bug in zxcvbn-ts and submitted a fix with a regression test.",
+      "skills": [
+        {
+          "name": "TypeScript",
+          "level": 2,
+          "link": "/skills/typescript"
+        },
+        {
+          "name": "Monorepos",
+          "level": 2,
+          "link": "/skills/monorepos"
+        },
+        {
+          "name": "Integration Testing",
+          "level": 2,
+          "link": "/skills/integration-testing"
+        },
+        {
+          "name": "Testcontainers",
+          "level": 2,
+          "link": "/skills/testcontainers"
+        },
+        {
+          "name": "SOLID design principles",
+          "level": 2,
+          "link": "/skills/solid-design"
+        },
+        {
+          "name": "Object-Oriented Programming",
+          "level": 2,
+          "link": "/skills/oop"
+        },
+        {
+          "name": "Functional programming",
+          "level": 2,
+          "link": "/skills/functional"
+        },
+        {
+          "name": "Technical Documentation",
+          "level": 1,
+          "link": "/skills/technical-documentation"
+        },
+        {
+          "name": "npm Package Publishing",
+          "level": 1,
+          "link": "/skills/npm-publishing"
+        },
+        {
+          "name": "Open Source Contribution",
+          "level": 1,
+          "link": "/skills/open-source"
+        }
+      ]
+    },
+    {
+      "filename": "Geospatial.md",
+      "title": "Geospatial & Algorithms",
+      "description": "I turn geographic data into working systems. I built a research-inspired crawler that adapts its search to place density, and fetched and processed heightmap PNGs for this site's hero.",
+      "skills": [
+        {
+          "name": "Spatially-Adaptive Density Crawlers",
+          "level": 2,
+          "link": "/skills/crawlers"
+        },
+        {
+          "name": "Heightmap Processing",
+          "level": 1,
+          "link": "/skills/heightmap-processing"
+        },
+        {
+          "name": "Geospatial Data Pipelines",
+          "level": 1,
+          "link": "/skills/geospatial-pipelines"
+        },
+        {
+          "name": "Algorithm Visualisation",
+          "level": 1,
+          "link": "/skills/algorithm-visualisation"
+        }
+      ]
+    },
+    {
       "filename": "ML.md",
       "title": "Machine Learning",
-      "description": "This is a short piece of text that I'm going to write about my study of machine learning.",
+      "description": "I learn by building and measuring. In my first ML project, classifying tumour tissue in pathology images, a linear probe on a pathology-specific model reached 0.968 test AUC, against 0.885 for my from-scratch CNN baseline.",
       "skills": [
         {
           "name": "Python",
@@ -183,9 +332,14 @@
           "link": "/skills/embeddings"
         },
         {
-          "name": "Spatially-Adaptive Density Crawlers",
+          "name": "Linear Probing",
           "level": 0,
-          "link": "/skills/crawlers"
+          "link": "/skills/linear-probing"
+        },
+        {
+          "name": "Model Evaluation (ROC AUC)",
+          "level": 0,
+          "link": "/skills/model-evaluation"
         }
       ]
     }
