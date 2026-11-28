@@ -2,9 +2,9 @@
   import { onMount } from 'svelte';
   import * as THREE from 'three';
   import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-  import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
   import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+  import { createStudioEnvironment, createTunnel } from './studio.ts';
 
   let { modelUrl }: { modelUrl: string } = $props();
 
@@ -39,6 +39,22 @@
     model.position.sub(center).multiplyScalar(scale);
   }
 
+  /** Turns plain, opaque surfaces silver-grey */
+  function paintModel(model: THREE.Object3D) {
+    model.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+
+      for (const material of [object.material].flat()) {
+        if (!(material instanceof THREE.MeshStandardMaterial)) continue;
+        if (material.map || material.transparent) continue;
+
+        material.color.set(0xbfc3c6);
+        material.metalness = 0.25;
+        material.roughness = 0.4;
+      }
+    });
+  }
+
   onMount(() => {
     let renderer: THREE.WebGLRenderer;
 
@@ -52,6 +68,7 @@
 
     let disposed = false;
     let model: THREE.Object3D | undefined;
+    let tunnel: ReturnType<typeof createTunnel> | undefined;
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.NeutralToneMapping;
@@ -62,13 +79,9 @@
     const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
     camera.position.set(4, 2, 5);
 
-    /** Gives the paint and metal something to reflect */
-    const pmrem = new THREE.PMREMGenerator(renderer);
-    const room = new RoomEnvironment();
-    const environment = pmrem.fromScene(room, 0.04);
+    /** Gives the paint and metal studio lights to reflect */
+    const environment = createStudioEnvironment(renderer);
     scene.environment = environment.texture;
-    room.dispose();
-    pmrem.dispose();
 
     const render = () => renderer.render(scene, camera);
 
@@ -105,7 +118,12 @@
 
         model = gltf.scene;
         normaliseModel(model);
-        scene.add(model);
+        paintModel(model);
+
+        const floorY = new THREE.Box3().setFromObject(model).min.y;
+        tunnel = createTunnel(floorY);
+
+        scene.add(model, tunnel.group);
         render();
         status = 'ready';
       })
@@ -119,6 +137,7 @@
       resizeObserver.disconnect();
       controls.dispose();
       if (model) disposeModel(model);
+      tunnel?.dispose();
       environment.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
@@ -127,10 +146,10 @@
   });
 </script>
 
-<div class="relative h-[70vh] w-full">
+<div class="relative h-dvh w-full">
   <div
     bind:this={container}
-    class="h-full w-full cursor-grab overflow-hidden active:cursor-grabbing"
+    class="h-full w-full cursor-grab overflow-hidden bg-[linear-gradient(to_bottom,#fff,#d5d9dc_55%,#fff)] active:cursor-grabbing"
     role="img"
     aria-label="3D model of a Porsche 992 GT3 R race car"
   ></div>
