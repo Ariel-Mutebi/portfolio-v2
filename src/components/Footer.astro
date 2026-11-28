@@ -28,9 +28,9 @@ const { cta, socials } = footer;
             class="relative isolate flex items-end gap-5 p-5 pb-3 font-mono text-2xl sm:text-3xl text-ebony-600
               font-bold transition-colors duration-150 hover:text-viridian-50 focus-visible:text-viridian-50
               before:absolute before:inset-0 before:-z-10 before:bg-ebony-600 before:origin-left
-              before:scale-x-0 before:transition-transform before:duration-300 before:ease-[steps(40)]
+              before:scale-x-0 before:transition-transform before:duration-300 before:ease-[steps(9)]
               hover:before:scale-x-100 focus-visible:before:scale-x-100 motion-reduce:transition-none
-              motion-reduce:before:transition-none"
+              motion-reduce:before:transition-none before:will-change-transform"
           >
             <img src={icon} alt="" class="size-6 sm:size-12" />
             {text}
