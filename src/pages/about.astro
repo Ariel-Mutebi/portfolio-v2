@@ -1,0 +1,9 @@
+---
+import CarViewer from "../components/car/CarViewer.svelte";
+import modelUrl from "../assets/porsche.glb?url";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Ariel Robert Mutebi | About" description="">
+  <CarViewer {modelUrl} client:load />
+</BaseLayout>
