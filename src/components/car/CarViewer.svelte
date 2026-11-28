@@ -12,9 +12,9 @@
   };
 </script>
 
-<div class="relative h-[70vh] w-full">
+<div class="relative h-dvh w-full">
   <div
-    class="h-full w-full cursor-grab overflow-hidden bg-[linear-gradient(to_bottom,#fff,#d5d9dc_55%,#fff)] active:cursor-grabbing"
+    class="h-full w-full cursor-grab overflow-hidden bg-linear-to-b from-white via-steel-50 via-55% to-white active:cursor-grabbing"
     role="img"
     aria-label="3D model of a Porsche 992 GT3 R race car"
     {@attach (element) =>
@@ -25,7 +25,7 @@
   ></div>
 
   <p
-    class="pointer-events-none absolute inset-x-0 bottom-4 text-center font-mono text-sm"
+    class="pointer-events-none absolute inset-x-0 bottom-4 text-center font-mono text-sm text-ebony-900 font-medium"
     aria-live="polite"
   >
     {messages[status]}

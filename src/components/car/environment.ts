@@ -1,16 +1,25 @@
-import * as THREE from 'three';
+import {
+  DoubleSide,
+  Mesh,
+  MeshBasicMaterial,
+  PlaneGeometry,
+  PMREMGenerator,
+  Scene,
+  type WebGLRenderer
+} from 'three';
+import { threeColor } from '../../lib/colors.ts';
 
 /** Builds the reflections: a grey room with long light panels */
-export function createStudioEnvironment(renderer: THREE.WebGLRenderer) {
-  const room = new THREE.Scene();
-  room.background = new THREE.Color(0x55595d);
+export function createStudioEnvironment(renderer: WebGLRenderer) {
+  const room = new Scene();
+  room.background = threeColor('--color-ebony-500');
 
-  const geometry = new THREE.PlaneGeometry(1, 1);
-  const material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+  const geometry = new PlaneGeometry(1, 1);
+  const material = new MeshBasicMaterial({ side: DoubleSide });
   material.color.setScalar(4);
 
   function addPanel(x: number, y: number, z: number, width: number, height: number) {
-    const panel = new THREE.Mesh(geometry, material);
+    const panel = new Mesh(geometry, material);
     panel.position.set(x, y, z);
     panel.scale.set(width, height, 1);
     panel.lookAt(0, 0, 0);
@@ -21,7 +30,7 @@ export function createStudioEnvironment(renderer: THREE.WebGLRenderer) {
   addPanel(-5, 2, 0, 8, 0.6);
   addPanel(5, 2, 0, 8, 0.6);
 
-  const pmrem = new THREE.PMREMGenerator(renderer);
+  const pmrem = new PMREMGenerator(renderer);
   const target = pmrem.fromScene(room, 0.04);
 
   pmrem.dispose();

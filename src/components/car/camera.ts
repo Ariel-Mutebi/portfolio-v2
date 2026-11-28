@@ -1,9 +1,9 @@
-import * as THREE from 'three';
+import { PerspectiveCamera } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 /** Creates a camera that can be dragged around the origin */
 export function createCameraRig(canvas: HTMLCanvasElement, onChange: () => void) {
-  const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+  const camera = new PerspectiveCamera(35, 1, 0.1, 100);
   camera.position.set(4, 2, 5);
 
   const controls = new OrbitControls(camera, canvas);

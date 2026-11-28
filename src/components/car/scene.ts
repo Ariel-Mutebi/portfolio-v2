@@ -1,4 +1,9 @@
-import * as THREE from 'three';
+import {
+  Box3,
+  Scene,
+  WebGLRenderer,
+  type Object3D,
+} from 'three';
 import { createCameraRig } from './camera.ts';
 import { createStudioEnvironment } from './environment.ts';
 import { disposeModel, loadCarModel } from './model';
@@ -19,7 +24,7 @@ export function mountWindTunnel(
 ) {
   onStatusChange?.('loading');
 
-  let renderer: THREE.WebGLRenderer;
+  let renderer: WebGLRenderer;
 
   try {
     renderer = createRenderer(container);
@@ -30,10 +35,10 @@ export function mountWindTunnel(
   }
 
   let disposed = false;
-  let model: THREE.Object3D | undefined;
+  let model: Object3D | undefined;
   let tunnel: ReturnType<typeof createTunnel> | undefined;
 
-  const scene = new THREE.Scene();
+  const scene = new Scene();
   const environment = createStudioEnvironment(renderer);
   scene.environment = environment.texture;
 
@@ -56,7 +61,7 @@ export function mountWindTunnel(
       if (disposed) return disposeModel(car);
 
       model = car;
-      const floorY = new THREE.Box3().setFromObject(car).min.y;
+      const floorY = new Box3().setFromObject(car).min.y;
       tunnel = createTunnel(floorY);
 
       scene.add(car, tunnel.group);

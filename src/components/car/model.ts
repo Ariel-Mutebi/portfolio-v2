@@ -1,12 +1,20 @@
-import * as THREE from 'three';
+import {
+  Box3,
+  Mesh,
+  MeshStandardMaterial,
+  Texture,
+  Vector3,
+  type Object3D
+} from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
+import { threeColor } from '../../lib/colors.ts';
 
 /** Scales the model to 4 units long and centres it on the origin */
-function normaliseModel(model: THREE.Object3D) {
-  const box = new THREE.Box3().setFromObject(model);
-  const size = box.getSize(new THREE.Vector3());
-  const center = box.getCenter(new THREE.Vector3());
+function normaliseModel(model: Object3D) {
+  const box = new Box3().setFromObject(model);
+  const size = box.getSize(new Vector3());
+  const center = box.getCenter(new Vector3());
   const scale = 4 / Math.max(size.x, size.y, size.z);
 
   model.scale.multiplyScalar(scale);
@@ -14,15 +22,15 @@ function normaliseModel(model: THREE.Object3D) {
 }
 
 /** Turns plain, opaque surfaces silver-grey */
-function paintModel(model: THREE.Object3D) {
+function paintModel(model: Object3D) {
   model.traverse((object) => {
-    if (!(object instanceof THREE.Mesh)) return;
+    if (!(object instanceof Mesh)) return;
 
     for (const material of [object.material].flat()) {
-      if (!(material instanceof THREE.MeshStandardMaterial)) continue;
+      if (!(material instanceof MeshStandardMaterial)) continue;
       if (material.map || material.transparent) continue;
 
-      material.color.set(0xbfc3c6);
+      material.color.set(threeColor('--color-ebony-200'));
       material.metalness = 0.25;
       material.roughness = 0.4;
     }
@@ -42,14 +50,14 @@ export async function loadCarModel(url: string) {
 }
 
 /** Frees the memory used by a model */
-export function disposeModel(model: THREE.Object3D) {
+export function disposeModel(model: Object3D) {
   model.traverse((object) => {
-    if (!(object instanceof THREE.Mesh)) return;
+    if (!(object instanceof Mesh)) return;
     object.geometry.dispose();
 
     for (const material of [object.material].flat()) {
       for (const value of Object.values(material)) {
-        if (!(value instanceof THREE.Texture)) continue;
+        if (!(value instanceof Texture)) continue;
         value.dispose();
         if (value.source.data instanceof ImageBitmap) value.source.data.close();
       }

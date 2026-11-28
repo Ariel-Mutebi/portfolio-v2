@@ -1,3 +1,9 @@
+uniform vec3 uGridColor;
+uniform float uTintStrength;
+uniform float uLineStrength;
+uniform vec3 uShadowColor;
+uniform float uShadowStrength;
+
 varying vec2 vPoint;
 
 void main() {
@@ -6,8 +12,14 @@ void main() {
   float line = 1.0 - min(min(distanceToLine.x, distanceToLine.y), 1.0);
 
   float fade = 1.0 - smoothstep(2.0, 4.8, length(vPoint));
-  float shadow = 0.55 * (1.0 - smoothstep(0.5, 1.2, length(vPoint / vec2(1.05, 2.2))));
-  float grid = (0.08 + 0.2 * line) * fade;
+  float grid = (uTintStrength + uLineStrength * line) * fade;
+  float shadow = uShadowStrength * (1.0 - smoothstep(0.5, 1.2, length(vPoint / vec2(1.05, 2.2))));
 
-  gl_FragColor = vec4(vec3(0.12, 0.13, 0.14), max(grid, shadow));
+  /** Layers the shadow over the grid */
+  float alpha = shadow + grid * (1.0 - shadow);
+  vec3 color = (uShadowColor * shadow + uGridColor * grid * (1.0 - shadow)) / max(alpha, 0.0001);
+
+  gl_FragColor = vec4(color, alpha);
+
+  #include <colorspace_fragment>
 }
